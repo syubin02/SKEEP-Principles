@@ -26,6 +26,10 @@ const KEYWORD_LAYOUT: Record<string, VideoLayout> = {
   Create: "inset",
 };
 
+const KEYWORD_TILT_DEG: Record<string, number> = {
+  Create: 5,
+};
+
 const ENTER_TRANSITION = "scale 0.9s cubic-bezier(0.16, 1, 0.3, 1)";
 const LEAVE_TRANSITION = "scale 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
 const NO_TRANSITION = "none";
@@ -119,6 +123,7 @@ export function Hero() {
                 style={{
                   opacity: active ? 1 : 0,
                   scale: active ? 1 : 1.15,
+                  rotate: `${KEYWORD_TILT_DEG[word] ?? 0}deg`,
                   transition,
                 }}
               >
