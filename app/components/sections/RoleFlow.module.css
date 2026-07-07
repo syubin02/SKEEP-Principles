@@ -1,12 +1,4 @@
-.wrapper {
-  height: 220vh;
-  position: relative;
-}
-
 .section {
-  height: 100vh;
-  position: sticky;
-  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,8 +11,10 @@
   width: min(1600px, 100%);
   aspect-ratio: 1600 / 900;
   border-radius: 32px;
-  background: var(--color-bg-soft);
   overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .textLayer {
@@ -40,6 +34,7 @@
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.24;
+  color: #ffffff;
 }
 
 .body {
@@ -47,24 +42,5 @@
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
-.progress {
-  position: absolute;
-  left: clamp(24px, 6vw, 96px);
-  bottom: clamp(24px, 4vw, 56px);
-  display: flex;
-  gap: 8px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.dotActive {
-  background: rgba(0, 0, 0, 0.7);
+  color: rgba(255, 255, 255, 0.85);
 }
