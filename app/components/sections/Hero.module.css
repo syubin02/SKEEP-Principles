@@ -38,7 +38,6 @@
   translate: -50% -50%;
   width: min(62vw, 760px);
   height: min(58vh, 460px);
-  border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
 }
