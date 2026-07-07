@@ -2,20 +2,17 @@ import { ParallaxLayer } from "../ui/ParallaxLayer";
 import { Reveal } from "../ui/Reveal";
 import styles from "./IcebreakSkip.module.css";
 
-const NOISE_LINES = [
-  "서 <b>택시를 탈 때도</b> 나 지금 빨리 우리대학",
-  "겼고 내가 원하는건 <b>여행을 갈 때도</b> 내 호",
-  "려고 왔으니까 음악은 잔잔한걸로 <b>카페에서도</b> 내 결",
-  "기에 맞는 옷으로 <b>쇼핑을 하면서</b> 브",
+const NOISE_ITEMS = [
+  { emoji: "🚕", text: "택시를 탈 때도", top: "14.5%", left: "5.8%" },
+  { emoji: "🧳", text: "여행을 갈 때도", top: "36.3%", left: "47.6%" },
+  { emoji: "☕", text: "카페에서도", top: "76.6%", left: "11.6%" },
 ];
 
-function NoiseLine({ text }: { text: string }) {
-  const parts = text.split(/<b>|<\/b>/);
+function NoiseItem({ emoji, text, top, left }: (typeof NOISE_ITEMS)[number]) {
   return (
-    <p className={styles.noiseLine}>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? <strong key={i}>{part}</strong> : <span key={i}>{part}</span>
-      )}
+    <p className={styles.noiseLine} style={{ top, left }}>
+      <span className={styles.noiseEmoji}>{emoji}</span>
+      <strong>{text}</strong>
     </p>
   );
 }
@@ -55,8 +52,8 @@ export function IcebreakSkip() {
       <Reveal delay={0.15} className={styles.visual}>
         <ParallaxLayer strength={30}>
           <div className={styles.noise}>
-            {NOISE_LINES.map((line) => (
-              <NoiseLine key={line} text={line} />
+            {NOISE_ITEMS.map((item) => (
+              <NoiseItem key={item.text} {...item} />
             ))}
           </div>
         </ParallaxLayer>

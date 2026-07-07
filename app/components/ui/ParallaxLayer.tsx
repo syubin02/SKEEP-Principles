@@ -21,8 +21,8 @@ export function ParallaxLayer({
   const y = useTransform(scrollYProgress, [0, 1], [strength, -strength]);
 
   return (
-    <div ref={ref} className={className}>
-      <motion.div style={{ y }}>{children}</motion.div>
+    <div ref={ref} className={className} style={{ position: "absolute", inset: 0 }}>
+      <motion.div style={{ y, position: "absolute", inset: 0 }}>{children}</motion.div>
     </div>
   );
 }
