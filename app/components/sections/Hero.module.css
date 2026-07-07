@@ -1,0 +1,31 @@
+.wrapper {
+  height: 200vh;
+  position: relative;
+}
+
+.section {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-soft);
+  padding: clamp(64px, 8vw, 84px) var(--edge-padding);
+  overflow: hidden;
+}
+
+.heading {
+  font-size: clamp(32px, 4.8vw, 72px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  text-align: center;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.keyword {
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.3);
+  min-width: 0.5ch;
+}

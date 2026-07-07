@@ -1,0 +1,46 @@
+:root {
+  --color-bg: #ffffff;
+  --color-bg-soft: #e7eaf0;
+  --color-text: #000000;
+  --color-text-muted: rgba(0, 0, 0, 0.55);
+  --color-accent: #ff076a;
+  --edge-padding: clamp(24px, 8.3vw, 160px);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-pretendard), -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
