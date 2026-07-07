@@ -80,7 +80,21 @@ function useTypewriter(words: string[]) {
 
 export function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<Partial<Record<string, HTMLVideoElement>>>({});
   const { text: typedText, wordIndex } = useTypewriter(KEYWORDS);
+
+  useEffect(() => {
+    KEYWORDS.forEach((word, i) => {
+      const el = videoRefs.current[word];
+      if (!el) return;
+      if (i === wordIndex) {
+        el.currentTime = 0;
+        el.play().catch(() => {});
+      } else {
+        el.pause();
+      }
+    });
+  }, [wordIndex]);
 
   const [renderedIndex, setRenderedIndex] = useState(wordIndex);
   const [prevWordIndex, setPrevWordIndex] = useState(wordIndex);
@@ -127,7 +141,16 @@ export function Hero() {
                   transition,
                 }}
               >
-                <video className={styles.video} src={src} autoPlay muted loop playsInline />
+                <video
+                  ref={(el) => {
+                    videoRefs.current[word] = el ?? undefined;
+                  }}
+                  className={styles.video}
+                  src={src}
+                  muted
+                  loop
+                  playsInline
+                />
                 <div className={layout === "inset" ? styles.videoScrimInset : styles.videoScrim} />
               </div>
             );
