@@ -16,6 +16,19 @@ const KEYWORD_VIDEOS: Record<string, string | null> = {
   Create: `${BASE_PATH}/hero/create.mp4`,
 };
 
+type VideoLayout = "full" | "inset";
+
+const KEYWORD_LAYOUT: Record<string, VideoLayout> = {
+  Focus: "full",
+  Meet: "inset",
+  Travel: "full",
+  Rest: "full",
+  Create: "inset",
+};
+
+const ENTER_TRANSITION = "scale 0.85s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease-out";
+const LEAVE_TRANSITION = "scale 0.45s cubic-bezier(0.4, 0, 1, 1), opacity 0.35s ease-in";
+
 const TYPING_SPEED_MS = 90;
 const DELETING_SPEED_MS = 50;
 const PAUSE_AFTER_TYPE_MS = 1200;
@@ -75,20 +88,25 @@ export function Hero() {
           {KEYWORDS.map((word, i) => {
             const src = KEYWORD_VIDEOS[word];
             if (!src) return null;
+            const active = wordIndex === i;
+            const layout = KEYWORD_LAYOUT[word];
             return (
-              <video
+              <div
                 key={word}
-                className={styles.video}
-                style={{ opacity: wordIndex === i ? 1 : 0 }}
-                src={src}
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
+                className={`${styles.videoContainer} ${
+                  layout === "inset" ? styles.videoInset : styles.videoFull
+                }`}
+                style={{
+                  opacity: active ? 1 : 0,
+                  scale: active ? 1 : 1.15,
+                  transition: active ? ENTER_TRANSITION : LEAVE_TRANSITION,
+                }}
+              >
+                <video className={styles.video} src={src} autoPlay muted loop playsInline />
+                <div className={layout === "inset" ? styles.videoScrimInset : styles.videoScrim} />
+              </div>
             );
           })}
-          <div className={styles.videoScrim} />
         </div>
         <motion.p className={styles.heading} style={{ opacity, scale }}>
           <span>{"When you need "}</span>
