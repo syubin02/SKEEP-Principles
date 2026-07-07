@@ -64,6 +64,7 @@ export function Hero() {
         <div className={styles.gradientLayer}>
           <div className={`${styles.blob} ${styles.blob1}`} />
           <div className={`${styles.blob} ${styles.blob2}`} />
+          <div className={`${styles.blob} ${styles.blob3}`} />
         </div>
         <motion.p className={styles.heading} style={{ opacity, scale }}>
           <span>{"When you need "}</span>
