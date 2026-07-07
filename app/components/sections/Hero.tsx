@@ -13,7 +13,7 @@ const KEYWORD_VIDEOS: Record<string, string | null> = {
   Meet: `${BASE_PATH}/hero/meet.mp4`,
   Travel: `${BASE_PATH}/hero/travel.mp4`,
   Rest: `${BASE_PATH}/hero/rest.mp4`,
-  Create: null,
+  Create: `${BASE_PATH}/hero/create.mp4`,
 };
 
 const TYPING_SPEED_MS = 90;
