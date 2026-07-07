@@ -1,8 +1,7 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Reveal } from "../ui/Reveal";
 import styles from "./CTA.module.css";
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function CTA() {
   return (
@@ -20,14 +19,14 @@ export function CTA() {
         </p>
       </Reveal>
       <Reveal delay={0.15} className={styles.visual}>
-        <motion.button
-          className={styles.button}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="SKEEP 이어가기"
-        >
-          →
-        </motion.button>
+        <video
+          className={styles.video}
+          src={`${BASE_PATH}/cta/restart.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
       </Reveal>
     </section>
   );
