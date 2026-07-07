@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 
-const KEYWORDS = ["Focus", "Meet", "Travel", "Rest", "Create"];
+const KEYWORDS = ["Focus", "Meet", "Travel", "Rest"];
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -13,7 +13,6 @@ const KEYWORD_VIDEOS: Record<string, string | null> = {
   Meet: `${BASE_PATH}/hero/meet.mp4`,
   Travel: `${BASE_PATH}/hero/travel.mp4`,
   Rest: `${BASE_PATH}/hero/rest.mp4`,
-  Create: `${BASE_PATH}/hero/create.mp4`,
 };
 
 type VideoLayout = "full" | "inset";
@@ -23,12 +22,9 @@ const KEYWORD_LAYOUT: Record<string, VideoLayout> = {
   Meet: "inset",
   Travel: "full",
   Rest: "full",
-  Create: "inset",
 };
 
-const KEYWORD_TILT_DEG: Record<string, number> = {
-  Create: 5,
-};
+const KEYWORD_TILT_DEG: Record<string, number> = {};
 
 const ENTER_TRANSITION = "scale 0.9s cubic-bezier(0.16, 1, 0.3, 1)";
 const LEAVE_TRANSITION = "scale 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
