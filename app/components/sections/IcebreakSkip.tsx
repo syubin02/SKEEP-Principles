@@ -1,47 +1,7 @@
-import { ParallaxLayer } from "../ui/ParallaxLayer";
 import { Reveal } from "../ui/Reveal";
 import styles from "./IcebreakSkip.module.css";
 
-type LinePart =
-  | { type: "dim"; text: string }
-  | { type: "highlight"; emoji: string; text: string };
-
-const NOISE_LINES: LinePart[][] = [
-  [
-    { type: "dim", text: "서 " },
-    { type: "highlight", emoji: "🚕", text: "택시를 탈 때도" },
-    { type: "dim", text: " 나 지금 빨리 우리대학" },
-  ],
-  [
-    { type: "dim", text: "갰고 내가 원하는건 " },
-    { type: "highlight", emoji: "🧳", text: "여행을 갈 때도" },
-  ],
-  [{ type: "dim", text: "시험공부하려고 왔으니까 음악은 잔잔한" }],
-  [
-    { type: "dim", text: "뉴는 " },
-    { type: "highlight", emoji: "☕", text: "카페에서도" },
-    { type: "dim", text: " 내가 평소에 좋아하" },
-  ],
-];
-
-function NoiseLine({ parts }: { parts: LinePart[] }) {
-  return (
-    <p className={styles.noiseLine}>
-      {parts.map((part, i) =>
-        part.type === "dim" ? (
-          <span key={i} className={styles.dim}>
-            {part.text}
-          </span>
-        ) : (
-          <span key={i} className={styles.highlight}>
-            <span className={styles.noiseEmoji}>{part.emoji}</span>
-            <strong>{part.text}</strong>
-          </span>
-        )
-      )}
-    </p>
-  );
-}
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function SkipIcon() {
   return (
@@ -76,13 +36,14 @@ export function IcebreakSkip() {
         </p>
       </Reveal>
       <Reveal delay={0.15} className={styles.visual}>
-        <ParallaxLayer strength={30}>
-          <div className={styles.noise}>
-            {NOISE_LINES.map((parts, i) => (
-              <NoiseLine key={i} parts={parts} />
-            ))}
-          </div>
-        </ParallaxLayer>
+        <video
+          className={styles.noiseVideo}
+          src={`${BASE_PATH}/icebreak/noise.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
       </Reveal>
     </section>
   );
