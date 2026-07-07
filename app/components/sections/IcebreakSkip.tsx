@@ -24,19 +24,13 @@ function SkipIcon() {
   return (
     <svg
       className={styles.skipIcon}
-      viewBox="0 0 512 512"
+      viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <circle cx="256" cy="256" r="256" fill="#DCEEFC" />
-      <path
-        d="M158 176c0-14.5 15.7-23.6 28.3-16.4l111 64c12.6 7.3 12.6 25.5 0 32.8l-111 64c-12.6 7.3-28.3-1.8-28.3-16.4V176z"
-        fill="#85CBFA"
-      />
-      <path
-        d="M269 176c0-14.5 15.7-23.6 28.3-16.4l111 64c12.6 7.3 12.6 25.5 0 32.8l-111 64c-12.6 7.3-28.3-1.8-28.3-16.4V176z"
-        fill="#85CBFA"
-      />
+      <circle cx="12" cy="12" r="12" fill="#DCEEFC" />
+      <polygon points="7.2,8.2 7.2,15.8 12.8,12" fill="#85CBFA" />
+      <polygon points="12.4,8.2 12.4,15.8 18,12" fill="#85CBFA" />
     </svg>
   );
 }
