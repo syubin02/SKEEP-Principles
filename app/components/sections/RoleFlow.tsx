@@ -1,14 +1,30 @@
-import { Reveal } from "../ui/Reveal";
+"use client";
+
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import styles from "./RoleFlow.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function RoleFlow() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start 55%"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [120, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   return (
     <section className={styles.section}>
-      <Reveal
+      <motion.div
+        ref={ref}
         className={styles.box}
-        style={{ backgroundImage: `url(${BASE_PATH}/roleflow/bg.jpg)` }}
+        style={{
+          backgroundImage: `url(${BASE_PATH}/roleflow/bg.jpg)`,
+          y,
+          opacity,
+        }}
       >
         <div className={styles.textLayer}>
           <p className={styles.heading}>
@@ -23,7 +39,7 @@ export function RoleFlow() {
             선별해 맡깁니다.
           </p>
         </div>
-      </Reveal>
+      </motion.div>
     </section>
   );
 }
