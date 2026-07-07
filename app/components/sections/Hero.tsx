@@ -28,6 +28,10 @@ const KEYWORD_LAYOUT: Record<string, VideoLayout> = {
 
 const ENTER_TRANSITION = "scale 0.9s cubic-bezier(0.16, 1, 0.3, 1)";
 const LEAVE_TRANSITION = "scale 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
+const NO_TRANSITION = "none";
+
+// Keyword pairs that should cut instantly with no scale/fade animation.
+const SILENT_PAIRS: Array<[string, string]> = [["Travel", "Rest"]];
 
 const TYPING_SPEED_MS = 90;
 const DELETING_SPEED_MS = 50;
@@ -74,6 +78,19 @@ export function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { text: typedText, wordIndex } = useTypewriter(KEYWORDS);
 
+  const [renderedIndex, setRenderedIndex] = useState(wordIndex);
+  const [prevWordIndex, setPrevWordIndex] = useState(wordIndex);
+  if (wordIndex !== renderedIndex) {
+    setPrevWordIndex(renderedIndex);
+    setRenderedIndex(wordIndex);
+  }
+
+  const previousWord = KEYWORDS[prevWordIndex];
+  const currentWord = KEYWORDS[wordIndex];
+  const isSilentTransition = SILENT_PAIRS.some(
+    ([from, to]) => from === previousWord && to === currentWord
+  );
+
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end start"],
@@ -90,6 +107,9 @@ export function Hero() {
             if (!src) return null;
             const active = wordIndex === i;
             const layout = KEYWORD_LAYOUT[word];
+            let transition = NO_TRANSITION;
+            if (active) transition = isSilentTransition ? NO_TRANSITION : ENTER_TRANSITION;
+            else if (word === previousWord) transition = isSilentTransition ? NO_TRANSITION : LEAVE_TRANSITION;
             return (
               <div
                 key={word}
@@ -99,7 +119,7 @@ export function Hero() {
                 style={{
                   opacity: active ? 1 : 0,
                   scale: active ? 1 : 1.15,
-                  transition: active ? ENTER_TRANSITION : LEAVE_TRANSITION,
+                  transition,
                 }}
               >
                 <video className={styles.video} src={src} autoPlay muted loop playsInline />
