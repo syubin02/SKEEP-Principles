@@ -26,8 +26,8 @@ const KEYWORD_LAYOUT: Record<string, VideoLayout> = {
   Create: "inset",
 };
 
-const ENTER_TRANSITION = "scale 0.85s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease-out";
-const LEAVE_TRANSITION = "scale 0.45s cubic-bezier(0.4, 0, 1, 1), opacity 0.35s ease-in";
+const ENTER_TRANSITION = "scale 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out";
+const LEAVE_TRANSITION = "scale 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease-in";
 
 const TYPING_SPEED_MS = 90;
 const DELETING_SPEED_MS = 50;
