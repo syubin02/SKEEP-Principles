@@ -6,6 +6,10 @@
   gap: 12px;
 }
 
+.sectionInvert {
+  background: var(--color-bg-soft);
+}
+
 .eyebrow {
   font-size: clamp(18px, 2.2vw, 32px);
   font-weight: 600;
@@ -53,6 +57,10 @@
   min-height: clamp(140px, 12vw, 224px);
   justify-content: flex-start;
   cursor: pointer;
+}
+
+.questionInvert {
+  background: var(--color-bg);
 }
 
 .qLabel {

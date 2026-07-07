@@ -42,6 +42,7 @@ export default function Home() {
       />
       <FeaturePillar
         eyebrow="Product"
+        invertBg
         heading="하나의 제품, 더 확장된 가능성"
         body={"기능 모듈과 드라이버를 통해,\n사용자가 익숙한 제품으로 완전히 새로운 일을 수행합니다."}
         questions={[

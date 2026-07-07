@@ -10,6 +10,7 @@ export type FeaturePillarProps = {
   heading: string;
   body: string;
   questions: { label: string; text: string; answer?: string }[];
+  invertBg?: boolean;
 };
 
 function AnswerText({ text }: { text: string }) {
@@ -26,11 +27,13 @@ function QuestionCard({
   text,
   answer,
   delay,
+  invertBg,
 }: {
   label: string;
   text: string;
   answer?: string;
   delay: number;
+  invertBg?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -39,7 +42,7 @@ function QuestionCard({
   return (
     <Reveal delay={delay}>
       <div
-        className={styles.question}
+        className={invertBg ? `${styles.question} ${styles.questionInvert}` : styles.question}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={() => setClicked((c) => !c)}
@@ -65,9 +68,15 @@ function QuestionCard({
   );
 }
 
-export function FeaturePillar({ eyebrow, heading, body, questions }: FeaturePillarProps) {
+export function FeaturePillar({
+  eyebrow,
+  heading,
+  body,
+  questions,
+  invertBg,
+}: FeaturePillarProps) {
   return (
-    <section className={styles.section}>
+    <section className={invertBg ? `${styles.section} ${styles.sectionInvert}` : styles.section}>
       <Reveal>
         <p className={styles.eyebrow}>{eyebrow}</p>
       </Reveal>
@@ -87,6 +96,7 @@ export function FeaturePillar({ eyebrow, heading, body, questions }: FeaturePill
             text={q.text}
             answer={q.answer}
             delay={0.1 + i * 0.08}
+            invertBg={invertBg}
           />
         ))}
       </div>
