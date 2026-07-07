@@ -61,11 +61,6 @@ export function Hero() {
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.section}>
-        <div className={styles.gradientLayer}>
-          <div className={`${styles.blob} ${styles.blob1}`} />
-          <div className={`${styles.blob} ${styles.blob2}`} />
-          <div className={`${styles.blob} ${styles.blob3}`} />
-        </div>
         <motion.p className={styles.heading} style={{ opacity, scale }}>
           <span>{"When you need "}</span>
           <span className={styles.keyword}>{typedText}</span>
