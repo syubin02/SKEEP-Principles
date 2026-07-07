@@ -10,7 +10,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const KEYWORD_VIDEOS: Record<string, string | null> = {
   Focus: `${BASE_PATH}/hero/focus.mp4`,
-  Meet: null,
+  Meet: `${BASE_PATH}/hero/meet.mp4`,
   Travel: null,
   Rest: null,
   Create: null,
