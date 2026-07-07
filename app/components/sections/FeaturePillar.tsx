@@ -42,7 +42,10 @@ function QuestionCard({
             className={styles.answer}
             initial={false}
             animate={{ height: expanded ? "auto" : 0, opacity: expanded ? 1 : 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              height: { type: "spring", stiffness: 380, damping: 26, mass: 0.9 },
+              opacity: { duration: 0.2 },
+            }}
           >
             <span className={styles.aLabel}>A.</span>
             <p className={styles.aText}>{answer}</p>
