@@ -6,6 +6,16 @@ import styles from "./Hero.module.css";
 
 const KEYWORDS = ["Focus", "Meet", "Travel", "Rest", "Create"];
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+const KEYWORD_VIDEOS: Record<string, string | null> = {
+  Focus: `${BASE_PATH}/hero/focus.mp4`,
+  Meet: null,
+  Travel: null,
+  Rest: null,
+  Create: null,
+};
+
 const TYPING_SPEED_MS = 90;
 const DELETING_SPEED_MS = 50;
 const PAUSE_AFTER_TYPE_MS = 1200;
@@ -44,12 +54,12 @@ function useTypewriter(words: string[]) {
     return () => clearTimeout(id);
   }, [phase, text, wordIndex, words]);
 
-  return text;
+  return { text, wordIndex };
 }
 
 export function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const typedText = useTypewriter(KEYWORDS);
+  const { text: typedText, wordIndex } = useTypewriter(KEYWORDS);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -61,6 +71,25 @@ export function Hero() {
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.section}>
+        <div className={styles.videoLayer}>
+          {KEYWORDS.map((word, i) => {
+            const src = KEYWORD_VIDEOS[word];
+            if (!src) return null;
+            return (
+              <video
+                key={word}
+                className={styles.video}
+                style={{ opacity: wordIndex === i ? 1 : 0 }}
+                src={src}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            );
+          })}
+          <div className={styles.videoScrim} />
+        </div>
         <motion.p className={styles.heading} style={{ opacity, scale }}>
           <span>{"When you need "}</span>
           <span className={styles.keyword}>{typedText}</span>
