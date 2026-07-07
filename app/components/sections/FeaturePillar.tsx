@@ -12,6 +12,15 @@ export type FeaturePillarProps = {
   questions: { label: string; text: string; answer?: string }[];
 };
 
+function AnswerText({ text }: { text: string }) {
+  const parts = text.split(/<b>|<\/b>/);
+  return (
+    <p className={styles.aText}>
+      {parts.map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
+    </p>
+  );
+}
+
 function QuestionCard({
   label,
   text,
@@ -48,7 +57,7 @@ function QuestionCard({
             }}
           >
             <span className={styles.aLabel}>A.</span>
-            <p className={styles.aText}>{answer}</p>
+            <AnswerText text={answer} />
           </motion.div>
         )}
       </div>

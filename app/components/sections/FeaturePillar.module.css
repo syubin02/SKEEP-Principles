@@ -91,6 +91,10 @@
   margin-top: 6px;
 }
 
+.aText strong {
+  font-weight: 700;
+}
+
 @media (max-width: 720px) {
   .questions {
     grid-template-columns: 1fr;
