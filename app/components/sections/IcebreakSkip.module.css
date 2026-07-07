@@ -52,21 +52,49 @@
 .noise {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(14px, 2.6vw, 30px);
+  padding: clamp(20px, 3vw, 40px);
 }
 
 .noiseLine {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 0.3em;
   font-size: clamp(16px, 2.6vw, 34px);
   font-weight: 700;
   letter-spacing: -0.02em;
   white-space: nowrap;
+}
+
+.dim {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
+  animation: noiseFade 5s ease-in-out infinite;
+}
+
+.highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
   color: #ffffff;
 }
 
 .noiseEmoji {
   font-size: 1.1em;
   line-height: 1;
+}
+
+@keyframes noiseFade {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  40%,
+  70% {
+    opacity: 0;
+  }
+  90%,
+  100% {
+    opacity: 1;
+  }
 }
