@@ -20,6 +20,27 @@ function NoiseLine({ text }: { text: string }) {
   );
 }
 
+function SkipIcon() {
+  return (
+    <svg
+      className={styles.skipIcon}
+      viewBox="0 0 512 512"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle cx="256" cy="256" r="256" fill="#DCEEFC" />
+      <path
+        d="M158 176c0-14.5 15.7-23.6 28.3-16.4l111 64c12.6 7.3 12.6 25.5 0 32.8l-111 64c-12.6 7.3-28.3-1.8-28.3-16.4V176z"
+        fill="#85CBFA"
+      />
+      <path
+        d="M269 176c0-14.5 15.7-23.6 28.3-16.4l111 64c12.6 7.3 12.6 25.5 0 32.8l-111 64c-12.6 7.3-28.3-1.8-28.3-16.4V176z"
+        fill="#85CBFA"
+      />
+    </svg>
+  );
+}
+
 export function IcebreakSkip() {
   return (
     <section className={styles.section}>
@@ -30,6 +51,7 @@ export function IcebreakSkip() {
           아이스브레이킹은
           <br />
           스킵
+          <SkipIcon />
         </h2>
         <p className={styles.body}>
           낯선 환경과의 첫인사는 SKEEP이 맡고, 사용자는 반복된 자기소개 대신
