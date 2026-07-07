@@ -8,12 +8,19 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function RoleFlow() {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+
+  const { scrollYProgress: enterProgress } = useScroll({
     target: ref,
     offset: ["start end", "start 55%"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], [120, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const boxY = useTransform(enterProgress, [0, 1], [120, 0]);
+  const boxOpacity = useTransform(enterProgress, [0, 1], [0, 1]);
+
+  const { scrollYProgress: passProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const textY = useTransform(passProgress, [0, 1], [80, -80]);
 
   return (
     <section className={styles.section}>
@@ -22,11 +29,11 @@ export function RoleFlow() {
         className={styles.box}
         style={{
           backgroundImage: `url(${BASE_PATH}/roleflow/bg.jpg)`,
-          y,
-          opacity,
+          y: boxY,
+          opacity: boxOpacity,
         }}
       >
-        <div className={styles.textLayer}>
+        <motion.div className={styles.textLayer} style={{ y: textY }}>
           <p className={styles.heading}>
             각자의 역할을 모아
             <br />
@@ -38,7 +45,7 @@ export function RoleFlow() {
             <br />
             선별해 맡깁니다.
           </p>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );
