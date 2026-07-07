@@ -12,7 +12,7 @@ const KEYWORD_VIDEOS: Record<string, string | null> = {
   Focus: `${BASE_PATH}/hero/focus.mp4`,
   Meet: `${BASE_PATH}/hero/meet.mp4`,
   Travel: `${BASE_PATH}/hero/travel.mp4`,
-  Rest: null,
+  Rest: `${BASE_PATH}/hero/rest.mp4`,
   Create: null,
 };
 
