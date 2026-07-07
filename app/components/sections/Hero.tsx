@@ -1,14 +1,55 @@
 "use client";
 
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 
 const KEYWORDS = ["Focus", "Meet", "Travel", "Rest", "Create"];
 
+const TYPING_SPEED_MS = 90;
+const DELETING_SPEED_MS = 50;
+const PAUSE_AFTER_TYPE_MS = 1200;
+const PAUSE_AFTER_DELETE_MS = 300;
+
+function useTypewriter(words: string[]) {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [text, setText] = useState("");
+  const [phase, setPhase] = useState<"typing" | "pausing" | "deleting">("typing");
+
+  useEffect(() => {
+    const word = words[wordIndex];
+
+    if (phase === "typing") {
+      if (text.length < word.length) {
+        const id = setTimeout(() => setText(word.slice(0, text.length + 1)), TYPING_SPEED_MS);
+        return () => clearTimeout(id);
+      }
+      const id = setTimeout(() => setPhase("pausing"), PAUSE_AFTER_TYPE_MS);
+      return () => clearTimeout(id);
+    }
+
+    if (phase === "pausing") {
+      const id = setTimeout(() => setPhase("deleting"), 0);
+      return () => clearTimeout(id);
+    }
+
+    if (text.length > 0) {
+      const id = setTimeout(() => setText(word.slice(0, text.length - 1)), DELETING_SPEED_MS);
+      return () => clearTimeout(id);
+    }
+    const id = setTimeout(() => {
+      setWordIndex((i) => (i + 1) % words.length);
+      setPhase("typing");
+    }, PAUSE_AFTER_DELETE_MS);
+    return () => clearTimeout(id);
+  }, [phase, text, wordIndex, words]);
+
+  return text;
+}
+
 export function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(0);
+  const typedText = useTypewriter(KEYWORDS);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -17,30 +58,17 @@ export function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % KEYWORDS.length);
-    }, 1600);
-    return () => clearInterval(id);
-  }, []);
-
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.section}>
+        <div className={styles.gradientLayer}>
+          <div className={`${styles.blob} ${styles.blob1}`} />
+          <div className={`${styles.blob} ${styles.blob2}`} />
+        </div>
         <motion.p className={styles.heading} style={{ opacity, scale }}>
           <span>{"When you need "}</span>
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={KEYWORDS[index]}
-              className={styles.keyword}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {KEYWORDS[index]}
-            </motion.span>
-          </AnimatePresence>
+          <span className={styles.keyword}>{typedText}</span>
+          <span className={styles.cursor}>|</span>
         </motion.p>
       </div>
     </div>
