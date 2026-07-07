@@ -5,8 +5,8 @@ import styles from "./IcebreakSkip.module.css";
 const NOISE_LINES = [
   "서 <b>택시를 탈 때도</b> 나 지금 빨리 우리대학",
   "겼고 내가 원하는건 <b>여행을 갈 때도</b> 내 호",
-  "려고 왔으니까 음악은 잔잔한걸로 <b>카페</b>",
-  "이런거고 날씨랑 직장분위기에 맞는 옷",
+  "려고 왔으니까 음악은 잔잔한걸로 <b>카페에서도</b> 내 결",
+  "기에 맞는 옷으로 <b>쇼핑을 하면서</b> 브",
 ];
 
 function NoiseLine({ text }: { text: string }) {
