@@ -30,8 +30,8 @@ export function Detour() {
   });
 
   const lineStyle = (progress: number) => ({
-    opacity: 0.25 + progress * 0.75,
-    transform: `translateY(${(1 - progress) * 16}px)`,
+    opacity: progress,
+    transform: `translateY(${(1 - progress) * 24}px)`,
   });
 
   return (
