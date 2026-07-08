@@ -1,6 +1,8 @@
 import { Reveal } from "../ui/Reveal";
 import styles from "./EnvironmentCollage.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export function EnvironmentCollage() {
   return (
     <section className={styles.section}>
@@ -18,7 +20,16 @@ export function EnvironmentCollage() {
           사용자의 기준 안에서만 움직입니다.
         </p>
       </Reveal>
-      <Reveal delay={0.1} className={styles.box} />
+      <Reveal delay={0.1} className={styles.box}>
+        <video
+          className={styles.boxVideo}
+          src={`${BASE_PATH}/environment/collage.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      </Reveal>
     </section>
   );
 }
