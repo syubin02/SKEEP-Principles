@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { CTA } from "../components/sections/CTA";
 import { ContextSummary } from "../components/service2/ContextSummary";
 import { ImageTextCard } from "../components/service2/ImageTextCard";
 import { LeaveNothing } from "../components/service2/LeaveNothing";
@@ -19,7 +18,6 @@ export default function Service2Page() {
       <ResetSequence />
       <ContextSummary />
       <ImageTextCard />
-      <CTA />
     </main>
   );
 }
