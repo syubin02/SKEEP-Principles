@@ -1,0 +1,47 @@
+.section {
+  background: var(--color-bg);
+  padding: clamp(56px, 8vw, 84px) var(--edge-padding);
+}
+
+.box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1600 / 900;
+  border-radius: 32px;
+  overflow: hidden;
+  background: #e7eaf0;
+}
+
+.textLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  text-align: right;
+  gap: 16px;
+  padding: clamp(28px, 6vw, 96px);
+}
+
+.heading {
+  font-size: clamp(24px, 4vw, 54px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.24;
+}
+
+.body {
+  font-size: clamp(14px, 1.8vw, 24px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 640px) {
+  .textLayer {
+    align-items: flex-start;
+    text-align: left;
+  }
+}

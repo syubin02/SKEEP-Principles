@@ -8,11 +8,11 @@ type Slide = {
   href?: string;
 };
 
-// Slot 0 is the only slide with a real destination today; the rest are
-// reserved placeholders for pages that haven't been built yet.
+// Slots 0-1 have real destinations today; the rest are reserved
+// placeholders for pages that haven't been built yet.
 const SLIDES: Slide[] = [
   { href: "/principles" },
-  {},
+  { href: "/service2" },
   {},
   {},
   {},
