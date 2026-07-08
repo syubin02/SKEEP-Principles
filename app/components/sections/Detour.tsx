@@ -1,11 +1,11 @@
-import { PixelPlaneCanvas } from "./PixelPlaneCanvas";
+import { Compass } from "./Compass";
 import { Reveal } from "../ui/Reveal";
 import styles from "./Detour.module.css";
 
 export function Detour() {
   return (
     <section className={styles.section}>
-      <PixelPlaneCanvas />
+      <Compass />
       <Reveal className={styles.textBlock} y={24}>
         <h2 className={styles.heading}>
           우회하는 것 또한

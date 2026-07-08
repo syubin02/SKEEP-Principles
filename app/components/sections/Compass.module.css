@@ -1,0 +1,67 @@
+.wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  pointer-events: none;
+}
+
+.svg {
+  width: clamp(280px, 34vw, 480px);
+  height: clamp(280px, 34vw, 480px);
+}
+
+.crosshair {
+  stroke: rgba(14, 24, 37, 0.12);
+  stroke-width: 1;
+}
+
+.ring {
+  fill: none;
+  stroke: rgba(14, 24, 37, 0.18);
+  stroke-width: 1.5;
+}
+
+.tick {
+  stroke: rgba(14, 24, 37, 0.28);
+  stroke-width: 1.5;
+}
+
+.labelMajor {
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--color-text);
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  fill: var(--color-text-muted);
+}
+
+.needle {
+  stroke: var(--color-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.needleFlag {
+  fill: var(--color-accent);
+}
+
+.centerDot {
+  fill: rgba(255, 255, 255, 0.65);
+  stroke: rgba(14, 24, 37, 0.15);
+  stroke-width: 1;
+}
+
+.locating {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-text-muted);
+}
