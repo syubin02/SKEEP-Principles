@@ -10,7 +10,7 @@ export function Reveal({
   className,
   style,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   delay?: number;
   y?: number;
   className?: string;
