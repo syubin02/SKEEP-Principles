@@ -42,7 +42,9 @@ export function RoleFlow() {
   const textY = useTransform(scrollYProgress, [0.45, 0.7], [60, 0]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (value >= 0.7) setTextRevealed(true);
+    if (value < 0.7) return;
+    const rect = wrapperRef.current?.getBoundingClientRect();
+    if (rect && rect.top <= 0) setTextRevealed(true);
   });
 
   return (
