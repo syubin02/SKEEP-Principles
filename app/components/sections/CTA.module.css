@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   align-content: center;
-  gap: clamp(40px, 6vw, 96px);
+  gap: clamp(48px, 7vw, 120px);
   flex-wrap: wrap;
 }
 

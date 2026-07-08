@@ -4,9 +4,9 @@
   padding: clamp(56px, 10vw, 119px) var(--edge-padding);
   margin-top: 180px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
-  gap: clamp(40px, 6vw, 96px);
+  gap: clamp(48px, 7vw, 120px);
   flex-wrap: wrap;
 }
 
