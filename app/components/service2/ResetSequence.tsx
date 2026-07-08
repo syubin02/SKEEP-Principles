@@ -89,10 +89,7 @@ export function ResetSequence() {
           <div
             key={i}
             className={styles.textLayer}
-            style={{
-              opacity: opacities[i],
-              transform: `translateY(${(1 - opacities[i]) * 20}px)`,
-            }}
+            style={{ opacity: opacities[i] }}
           >
             <p className={styles.heading}>
               {stage.heading.split("\n").map((line, j) => (
