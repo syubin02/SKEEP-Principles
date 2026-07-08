@@ -25,7 +25,7 @@
 }
 
 .heading {
-  font-size: clamp(24px, 4vw, 60px);
+  font-size: clamp(24px, 4vw, 64px);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.4;
