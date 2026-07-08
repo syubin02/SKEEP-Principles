@@ -28,17 +28,10 @@ const STAGES: Stage[] = [
   { heading: "다시, 처음처럼" },
 ];
 
-const HALF_WIDTH = 0.13;
-
-function triangleOpacity(value: number, center: number, halfWidth: number) {
-  const d = Math.abs(value - center);
-  return Math.max(0, 1 - d / halfWidth);
-}
-
 export function ResetSequence() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [opacities, setOpacities] = useState<number[]>(() => STAGES.map(() => 0));
+  const [activeStage, setActiveStage] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -63,9 +56,7 @@ export function ResetSequence() {
   }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    setOpacities(
-      STAGES.map((_, i) => triangleOpacity(value, (i + 0.5) / STAGES.length, HALF_WIDTH))
-    );
+    setActiveStage(Math.min(STAGES.length - 1, Math.floor(value * STAGES.length)));
 
     const video = videoRef.current;
     if (video && video.duration) {
@@ -89,7 +80,7 @@ export function ResetSequence() {
           <div
             key={i}
             className={styles.textLayer}
-            style={{ opacity: opacities[i] }}
+            style={{ opacity: i === activeStage ? 1 : 0 }}
           >
             <p className={styles.heading}>
               {stage.heading.split("\n").map((line, j) => (
