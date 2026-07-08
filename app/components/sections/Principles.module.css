@@ -30,7 +30,7 @@
 }
 
 .heading {
-  font-size: clamp(28px, 4.2vw, 64px);
+  font-size: clamp(24px, 3.6vw, 54px);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.3;
