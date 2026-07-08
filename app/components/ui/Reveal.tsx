@@ -9,12 +9,14 @@ export function Reveal({
   y = 40,
   className,
   style,
+  once = true,
 }: {
   children?: ReactNode;
   delay?: number;
   y?: number;
   className?: string;
   style?: CSSProperties;
+  once?: boolean;
 }) {
   return (
     <motion.div
@@ -22,7 +24,7 @@ export function Reveal({
       style={style}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={{ once, amount: 0.3 }}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}

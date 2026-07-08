@@ -1,12 +1,10 @@
-import { Compass } from "./Compass";
 import { Reveal } from "../ui/Reveal";
 import styles from "./Detour.module.css";
 
 export function Detour() {
   return (
     <section className={styles.section}>
-      <Compass />
-      <Reveal className={styles.textBlock} y={24}>
+      <Reveal className={styles.textBlock} y={40} once={false}>
         <h2 className={styles.heading}>
           우회하는 것 또한
           <br />
