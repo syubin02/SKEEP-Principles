@@ -47,7 +47,8 @@
 .visualColumn {
   display: flex;
   flex-direction: column;
-  gap: clamp(80px, 10vw, 160px);
+  gap: clamp(20px, 3vw, 40px);
+  padding-bottom: clamp(120px, 16vw, 280px);
   flex: 1 1 0;
   max-width: 560px;
 }
