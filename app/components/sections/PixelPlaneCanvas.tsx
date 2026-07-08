@@ -177,10 +177,11 @@ export function PixelPlaneCanvas() {
           alphaMul = flyAlpha;
         }
 
-        ctx.beginPath();
+        const armLength = particle.size * 2;
+        const thickness = Math.max(particle.size * 0.85, 1);
         ctx.fillStyle = `rgba(${DOT_COLOR}, ${particle.alpha * alphaMul})`;
-        ctx.arc(x, y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillRect(x - armLength / 2, y - thickness / 2, armLength, thickness);
+        ctx.fillRect(x - thickness / 2, y - armLength / 2, thickness, armLength);
       }
     }
 
