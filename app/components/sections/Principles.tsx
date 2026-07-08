@@ -5,14 +5,20 @@ const PRINCIPLES = [
   {
     title: "필요한 순간, 가장 적합하게",
     body: "환경의 제약 없이, 지금 당신에게 필요한 AI 피쳐를 즉시 불러옵니다.",
+    background: "#02a3fe",
+    color: "#fff5c1",
   },
   {
     title: "새로운 도구를 찾을 필요 없이",
     body: "물리적인 하드웨어를 더하지 않아도, 현재의 환경 안에서 최적화된 능력을 실행합니다.",
+    background: "#3fb875",
+    color: "#ffe74d",
   },
   {
     title: "사용이 끝나면, 흔적 없이",
     body: "다운로드 후 사용이 종료되면, 목적을 다한 능력은 깔끔하게 정리됩니다.",
+    background: "#ff3385",
+    color: "#ffe7f1",
   },
 ];
 
@@ -33,9 +39,16 @@ export function Principles() {
       </div>
       <div className={styles.visualColumn}>
         {PRINCIPLES.map((p, i) => (
-          <Reveal key={p.title} delay={i * 0.1} className={styles.card}>
-            <span className={styles.eyebrow}>Principle 0{i + 1}</span>
-            <p className={styles.cardTitle}>{p.title}</p>
+          <Reveal
+            key={p.title}
+            delay={i * 0.1}
+            className={styles.card}
+            style={{ background: p.background, color: p.color }}
+          >
+            <div className={styles.cardTop}>
+              <span className={styles.eyebrow}>Principle 0{i + 1}</span>
+              <p className={styles.cardTitle}>{p.title}</p>
+            </div>
             <p className={styles.cardBody}>{p.body}</p>
           </Reveal>
         ))}
