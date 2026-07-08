@@ -1,11 +1,19 @@
-.section {
+.wrapper {
+  height: 220vh;
   position: relative;
+  background: var(--color-text);
+  margin-top: 160px;
+  margin-bottom: 160px;
+}
+
+.section {
+  position: sticky;
+  top: 0;
   overflow: hidden;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-text);
   padding: clamp(64px, 8vw, 84px) var(--edge-padding);
 }
 
@@ -20,6 +28,9 @@
 }
 
 .heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   font-size: clamp(28px, 4.8vw, 64px);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -28,9 +39,18 @@
 }
 
 .body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   font-size: clamp(16px, 2.4vw, 32px);
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.62);
+}
+
+.heading span,
+.body span {
+  display: block;
+  transition: opacity 0.1s linear, transform 0.1s linear;
 }

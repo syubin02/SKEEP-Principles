@@ -1,6 +1,6 @@
 .section {
   background: var(--color-bg);
-  padding: clamp(56px, 10vw, 116px) var(--edge-padding);
+  padding: clamp(56px, 10vw, 116px) var(--edge-padding) clamp(96px, 16vw, 200px);
   display: flex;
   justify-content: space-between;
   align-items: center;
