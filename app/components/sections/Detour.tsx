@@ -7,8 +7,8 @@ import styles from "./Detour.module.css";
 const LINE_RANGES: [number, number][] = [
   [0.05, 0.22],
   [0.22, 0.39],
-  [0.46, 0.63],
-  [0.63, 0.8],
+  [0.55, 0.72],
+  [0.55, 0.72],
 ];
 
 function clampedProgress([start, end]: [number, number], value: number) {
