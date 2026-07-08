@@ -42,7 +42,6 @@
   gap: clamp(12px, 1.4vw, 20px);
   padding: clamp(28px, 6vw, 96px);
   pointer-events: none;
-  transition: opacity 0.1s linear;
 }
 
 .heading {
