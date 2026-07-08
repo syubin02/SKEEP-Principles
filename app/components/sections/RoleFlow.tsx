@@ -53,12 +53,17 @@ export function RoleFlow() {
         <motion.div
           ref={boxRef}
           className={styles.box}
-          style={{
-            backgroundImage: `url(${BASE_PATH}/roleflow/bg.jpg)`,
-            scale,
-            borderRadius,
-          }}
+          style={{ scale, borderRadius }}
         >
+          <motion.video
+            className={styles.bgVideo}
+            style={{ borderRadius }}
+            src={`${BASE_PATH}/roleflow/bg.mp4`}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
           <motion.div
             className={styles.textLayer}
             style={textRevealed ? { opacity: 1, y: 0 } : { opacity: textOpacity, y: textY }}
