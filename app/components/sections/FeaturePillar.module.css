@@ -25,15 +25,15 @@
 }
 
 .heading {
-  font-size: clamp(24px, 4vw, 64px);
-  font-weight: 700;
+  font-size: clamp(24px, 4vw, 54px);
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.4;
   max-width: 900px;
 }
 
 .body {
-  font-size: clamp(15px, 2vw, 36px);
+  font-size: clamp(15px, 2vw, 32px);
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.5;
