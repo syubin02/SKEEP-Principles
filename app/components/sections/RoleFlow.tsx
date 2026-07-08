@@ -19,7 +19,6 @@ export function RoleFlow() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const [fullBleedScale, setFullBleedScale] = useState(1.35);
-  const [textRevealed, setTextRevealed] = useState(false);
   const [shrinkProgress, setShrinkProgress] = useState(0);
   const [textProgress, setTextProgress] = useState(0);
 
@@ -44,17 +43,13 @@ export function RoleFlow() {
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     setShrinkProgress(clampedProgress(0, 0.5, value));
     setTextProgress(clampedProgress(0.45, 0.7, value));
-
-    if (value < 0.7) return;
-    const rect = wrapperRef.current?.getBoundingClientRect();
-    if (rect && rect.top <= 0) setTextRevealed(true);
   });
 
   const scale = lerp(fullBleedScale, 1, shrinkProgress);
   const borderRadius = lerp(0, 33.75, shrinkProgress);
   const dimOpacity = lerp(0, 0.15, shrinkProgress);
-  const textOpacity = textRevealed ? 1 : textProgress;
-  const textY = textRevealed ? 0 : lerp(60, 0, textProgress);
+  const textOpacity = textProgress;
+  const textY = lerp(60, 0, textProgress);
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
