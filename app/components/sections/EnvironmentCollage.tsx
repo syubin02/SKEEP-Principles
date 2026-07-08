@@ -32,11 +32,11 @@ export function EnvironmentCollage() {
           </ParallaxLayer>
         ))}
         <div className={styles.center}>
-          <div className={styles.icon} />
+          <p className={styles.eyebrow}>Standards</p>
           <h2 className={styles.heading}>
             어떤 환경에서도
             <br />
-            <span className={styles.headingStrong}>사용자</span>를 기준으로
+            사용자를 기준으로
           </h2>
           <p className={styles.body}>
             결제 한도, 정보 공유 범위, 제어 권한까지.
