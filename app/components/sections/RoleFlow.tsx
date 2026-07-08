@@ -1,21 +1,27 @@
 "use client";
 
-import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styles from "./RoleFlow.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function clampedProgress(start: number, end: number, value: number) {
+  if (end === start) return value >= end ? 1 : 0;
+  return Math.min(Math.max((value - start) / (end - start), 0), 1);
+}
+
+function lerp(from: number, to: number, t: number) {
+  return from + (to - from) * t;
+}
 
 export function RoleFlow() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const [fullBleedScale, setFullBleedScale] = useState(1.35);
   const [textRevealed, setTextRevealed] = useState(false);
+  const [shrinkProgress, setShrinkProgress] = useState(0);
+  const [textProgress, setTextProgress] = useState(0);
 
   useEffect(() => {
     const measure = () => {
@@ -35,27 +41,30 @@ export function RoleFlow() {
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.5], [fullBleedScale, 1]);
-  const borderRadius = useTransform(scrollYProgress, [0, 0.5], [0, 32]);
-
-  const textOpacity = useTransform(scrollYProgress, [0.45, 0.7], [0, 1]);
-  const textY = useTransform(scrollYProgress, [0.45, 0.7], [60, 0]);
-
   useMotionValueEvent(scrollYProgress, "change", (value) => {
+    setShrinkProgress(clampedProgress(0, 0.5, value));
+    setTextProgress(clampedProgress(0.45, 0.7, value));
+
     if (value < 0.7) return;
     const rect = wrapperRef.current?.getBoundingClientRect();
     if (rect && rect.top <= 0) setTextRevealed(true);
   });
 
+  const scale = lerp(fullBleedScale, 1, shrinkProgress);
+  const borderRadius = lerp(0, 33.75, shrinkProgress);
+  const dimOpacity = lerp(0, 0.15, shrinkProgress);
+  const textOpacity = textRevealed ? 1 : textProgress;
+  const textY = textRevealed ? 0 : lerp(60, 0, textProgress);
+
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.section}>
-        <motion.div
+        <div
           ref={boxRef}
           className={styles.box}
-          style={{ scale, borderRadius }}
+          style={{ transform: `scale(${scale})`, borderRadius }}
         >
-          <motion.video
+          <video
             className={styles.bgVideo}
             style={{ borderRadius }}
             src={`${BASE_PATH}/roleflow/bg.mp4`}
@@ -64,9 +73,13 @@ export function RoleFlow() {
             loop
             playsInline
           />
-          <motion.div
+          <div
+            className={styles.dimOverlay}
+            style={{ opacity: dimOpacity, borderRadius }}
+          />
+          <div
             className={styles.textLayer}
-            style={textRevealed ? { opacity: 1, y: 0 } : { opacity: textOpacity, y: textY }}
+            style={{ opacity: textOpacity, transform: `translateY(${textY}px)` }}
           >
             <p className={styles.heading}>
               각자의 역할을 모아
@@ -75,12 +88,11 @@ export function RoleFlow() {
             </p>
             <p className={styles.body}>
               SKEEP은 연결된 환경의 능력을 읽고,
-              <br />각 환경이 가장 잘할 수 있는 일을
               <br />
-              선별해 맡깁니다.
+              각 환경이 가장 잘할 수 있는 일을 선별해 맡깁니다.
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );
