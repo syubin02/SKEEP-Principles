@@ -25,7 +25,7 @@
 }
 
 .body {
-  font-size: clamp(16px, 2.4vw, 32px);
+  font-size: clamp(14px, 1.8vw, 24px);
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.5;
