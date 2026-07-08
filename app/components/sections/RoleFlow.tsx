@@ -1,6 +1,11 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import styles from "./RoleFlow.module.css";
 
@@ -10,6 +15,7 @@ export function RoleFlow() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const [fullBleedScale, setFullBleedScale] = useState(1.35);
+  const [textRevealed, setTextRevealed] = useState(false);
 
   useEffect(() => {
     const measure = () => {
@@ -35,6 +41,10 @@ export function RoleFlow() {
   const textOpacity = useTransform(scrollYProgress, [0.45, 0.7], [0, 1]);
   const textY = useTransform(scrollYProgress, [0.45, 0.7], [60, 0]);
 
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (value >= 0.7) setTextRevealed(true);
+  });
+
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.section}>
@@ -49,7 +59,7 @@ export function RoleFlow() {
         >
           <motion.div
             className={styles.textLayer}
-            style={{ opacity: textOpacity, y: textY }}
+            style={textRevealed ? { opacity: 1, y: 0 } : { opacity: textOpacity, y: textY }}
           >
             <p className={styles.heading}>
               각자의 역할을 모아
