@@ -7,14 +7,15 @@
   align-items: center;
   align-content: center;
   gap: clamp(48px, 7vw, 120px);
-  flex-wrap: wrap;
 }
 
 .textBlock {
   display: flex;
   flex-direction: column;
   gap: 28px;
-  max-width: 520px;
+  flex: 1 1 320px;
+  max-width: 640px;
+  min-width: 0;
 }
 
 .heading {
@@ -34,11 +35,23 @@
 
 .visual {
   position: relative;
-  width: min(560px, 100%);
+  flex: 1 1 360px;
+  max-width: 720px;
   aspect-ratio: 720 / 466;
   border-radius: 32px;
   overflow: hidden;
-  flex-shrink: 0;
+}
+
+@media (max-width: 860px) {
+  .section {
+    flex-direction: column;
+  }
+
+  .textBlock,
+  .visual {
+    flex: 1 1 auto;
+    width: 100%;
+  }
 }
 
 .video {
