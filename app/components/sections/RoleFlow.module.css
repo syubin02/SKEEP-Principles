@@ -2,6 +2,7 @@
   height: 250vh;
   position: relative;
   background: var(--color-bg);
+  margin-top: clamp(56px, 10vw, 120px);
 }
 
 .section {
