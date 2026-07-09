@@ -17,7 +17,7 @@ export default function Service2Page() {
     <main>
       <StatementBlock
         heading={["기기에는 흔적 없이", "내 맥락은 끊김 없이"]}
-        video={`${BASE_PATH}/service2/statement-intro.mp4`}
+        image={`${BASE_PATH}/service2/statement-bg.jpg`}
       />
       <LeaveNothing />
       <ResetSequence />
