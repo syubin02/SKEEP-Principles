@@ -1,10 +1,20 @@
 import { Reveal } from "../ui/Reveal";
 import styles from "./ImageTextCard.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export function ImageTextCard() {
   return (
     <section className={styles.section}>
       <Reveal className={styles.box}>
+        <video
+          className={styles.video}
+          src={`${BASE_PATH}/service2/farewell.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
         <div className={styles.textLayer}>
           <p className={styles.heading}>
             작별은 곧
