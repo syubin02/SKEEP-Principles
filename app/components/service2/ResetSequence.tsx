@@ -18,39 +18,77 @@ const STAGES: Stage[] = [
   { heading: "다시, 처음처럼" },
 ];
 
-// Browsers composite <video> on its own hardware layer, which mix-blend-mode
-// can't blend against directly. Drawing the current frame onto a canvas each
-// time we seek gives the blend mode a normal paintable surface to work with.
-function drawVideoFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
+// CSS mix-blend-mode is unreliable against <video>-derived content across
+// browsers (video and/or text can each get promoted to their own hardware
+// compositing layer, silently breaking the blend). Canvas 2D's
+// globalCompositeOperation implements the same blend math but always
+// composites in place, so we draw both the video frame and the heading
+// text onto one canvas instead of relying on CSS blending between
+// separate DOM layers.
+function clampPx(min: number, vw: number, max: number) {
+  return Math.min(max, Math.max(min, (window.innerWidth * vw) / 100));
+}
+
+function drawFrame(
+  video: HTMLVideoElement,
+  canvas: HTMLCanvasElement,
+  heading: string,
+  fontFamily: string
+) {
   const ctx = canvas.getContext("2d");
-  if (!ctx || !video.videoWidth || !video.videoHeight) return;
+  if (!ctx) return;
 
   const cw = canvas.width;
   const ch = canvas.height;
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  const canvasRatio = cw / ch;
-  const videoRatio = vw / vh;
 
-  let sx = 0;
-  let sy = 0;
-  let sw = vw;
-  let sh = vh;
-  if (videoRatio > canvasRatio) {
-    sw = vh * canvasRatio;
-    sx = (vw - sw) / 2;
+  ctx.globalCompositeOperation = "source-over";
+  if (video.videoWidth && video.videoHeight) {
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const canvasRatio = cw / ch;
+    const videoRatio = vw / vh;
+    let sx = 0;
+    let sy = 0;
+    let sw = vw;
+    let sh = vh;
+    if (videoRatio > canvasRatio) {
+      sw = vh * canvasRatio;
+      sx = (vw - sw) / 2;
+    } else {
+      sh = vw / canvasRatio;
+      sy = (vh - sh) / 2;
+    }
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
   } else {
-    sh = vw / canvasRatio;
-    sy = (vh - sh) / 2;
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, cw, ch);
   }
-  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
+
+  const dpr = window.devicePixelRatio || 1;
+  const fontSize = clampPx(28, 4.8, 72) * dpr;
+  const lineHeight = fontSize * 1.15;
+  const lines = heading.split("\n");
+
+  ctx.globalCompositeOperation = "exclusion";
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `600 ${fontSize}px ${fontFamily}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const totalHeight = lineHeight * lines.length;
+  const startY = ch / 2 - totalHeight / 2 + lineHeight / 2;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, cw / 2, startY + i * lineHeight);
+  });
 }
 
 export function ResetSequence() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fontFamilyRef = useRef("sans-serif");
   const [activeStage, setActiveStage] = useState(0);
+  const activeStageRef = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -58,15 +96,29 @@ export function ResetSequence() {
   });
 
   useEffect(() => {
+    activeStageRef.current = activeStage;
+  }, [activeStage]);
+
+  useEffect(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
+    const varValue = getComputedStyle(document.documentElement)
+      .getPropertyValue("--font-pretendard")
+      .trim();
+    if (varValue) fontFamilyRef.current = `${varValue}, sans-serif`;
+
+    const redraw = () => {
+      drawFrame(video, canvas, STAGES[activeStageRef.current].heading, fontFamilyRef.current);
+    };
+
     const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      drawVideoFrame(video, canvas);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      redraw();
     };
 
     const applyProgress = (value: number) => {
@@ -74,27 +126,35 @@ export function ResetSequence() {
       video.currentTime = value * video.duration;
     };
 
-    const onSeeked = () => drawVideoFrame(video, canvas);
     const onLoadedMetadata = () => {
       resize();
       applyProgress(scrollYProgress.get());
     };
 
+    document.fonts.ready.then(redraw);
     video.addEventListener("loadedmetadata", onLoadedMetadata);
-    video.addEventListener("seeked", onSeeked);
+    video.addEventListener("seeked", redraw);
     window.addEventListener("resize", resize);
     if (video.readyState >= 1) onLoadedMetadata();
 
     return () => {
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
-      video.removeEventListener("seeked", onSeeked);
+      video.removeEventListener("seeked", redraw);
       window.removeEventListener("resize", resize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    drawFrame(video, canvas, STAGES[activeStage].heading, fontFamilyRef.current);
+  }, [activeStage]);
+
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    setActiveStage(Math.min(STAGES.length - 1, Math.floor(value * STAGES.length)));
+    const next = Math.min(STAGES.length - 1, Math.floor(value * STAGES.length));
+    setActiveStage((prev) => (prev === next ? prev : next));
 
     const video = videoRef.current;
     if (video && video.duration) {
@@ -115,19 +175,7 @@ export function ResetSequence() {
           aria-hidden="true"
         />
         <canvas ref={canvasRef} className={styles.video} />
-        {STAGES.map((stage, i) => (
-          <div
-            key={i}
-            className={styles.textLayer}
-            style={{ opacity: i === activeStage ? 1 : 0 }}
-          >
-            <p className={styles.heading}>
-              {stage.heading.split("\n").map((line, j) => (
-                <span key={j}>{line}</span>
-              ))}
-            </p>
-          </div>
-        ))}
+        <span className={styles.srOnly}>{STAGES[activeStage].heading.replace("\n", " ")}</span>
       </div>
     </div>
   );
