@@ -6,16 +6,19 @@ export function StatementBlock({
   body,
   background = "#e7eaf0",
   video,
+  image,
 }: {
   heading: string[];
   body?: string[];
   background?: string;
   video?: string;
+  image?: string;
 }) {
+  const hasMedia = Boolean(video || image);
   return (
     <section
       className={styles.section}
-      style={{ background: video ? undefined : background }}
+      style={{ background: hasMedia ? undefined : background }}
     >
       {video && (
         <>
@@ -23,6 +26,7 @@ export function StatementBlock({
           <div className={styles.scrim} />
         </>
       )}
+      {!video && image && <img className={styles.video} src={image} alt="" />}
       <Reveal className={styles.textBlock}>
         <h2 className={`${styles.heading} ${video ? styles.headingOnVideo : ""}`}>
           {heading.map((line, i) => (
