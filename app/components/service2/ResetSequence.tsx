@@ -18,9 +18,38 @@ const STAGES: Stage[] = [
   { heading: "다시, 처음처럼" },
 ];
 
+// Browsers composite <video> on its own hardware layer, which mix-blend-mode
+// can't blend against directly. Drawing the current frame onto a canvas each
+// time we seek gives the blend mode a normal paintable surface to work with.
+function drawVideoFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx || !video.videoWidth || !video.videoHeight) return;
+
+  const cw = canvas.width;
+  const ch = canvas.height;
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  const canvasRatio = cw / ch;
+  const videoRatio = vw / vh;
+
+  let sx = 0;
+  let sy = 0;
+  let sw = vw;
+  let sh = vh;
+  if (videoRatio > canvasRatio) {
+    sw = vh * canvasRatio;
+    sx = (vw - sw) / 2;
+  } else {
+    sh = vw / canvasRatio;
+    sy = (vh - sh) / 2;
+  }
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
+}
+
 export function ResetSequence() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeStage, setActiveStage] = useState(0);
 
   const { scrollYProgress } = useScroll({
@@ -30,18 +59,37 @@ export function ResetSequence() {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      drawVideoFrame(video, canvas);
+    };
 
     const applyProgress = (value: number) => {
       if (!video.duration) return;
       video.currentTime = value * video.duration;
     };
 
-    const onLoadedMetadata = () => applyProgress(scrollYProgress.get());
-    video.addEventListener("loadedmetadata", onLoadedMetadata);
-    if (video.readyState >= 1) applyProgress(scrollYProgress.get());
+    const onSeeked = () => drawVideoFrame(video, canvas);
+    const onLoadedMetadata = () => {
+      resize();
+      applyProgress(scrollYProgress.get());
+    };
 
-    return () => video.removeEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("seeked", onSeeked);
+    window.addEventListener("resize", resize);
+    if (video.readyState >= 1) onLoadedMetadata();
+
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      video.removeEventListener("seeked", onSeeked);
+      window.removeEventListener("resize", resize);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,12 +107,14 @@ export function ResetSequence() {
       <div className={styles.section}>
         <video
           ref={videoRef}
-          className={styles.video}
+          className={styles.hiddenVideo}
           src={`${BASE_PATH}/service2/reset-recall.mp4`}
           muted
           playsInline
           preload="auto"
+          aria-hidden="true"
         />
+        <canvas ref={canvasRef} className={styles.video} />
         {STAGES.map((stage, i) => (
           <div
             key={i}
