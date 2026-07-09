@@ -20,21 +20,17 @@ export function StatementBlock({
       className={styles.section}
       style={{ background: hasMedia ? undefined : background }}
     >
-      {video && (
-        <>
-          <video className={styles.video} src={video} autoPlay muted loop playsInline />
-          <div className={styles.scrim} />
-        </>
-      )}
+      {video && <video className={styles.video} src={video} autoPlay muted loop playsInline />}
       {!video && image && <img className={styles.video} src={image} alt="" />}
+      {hasMedia && <div className={styles.scrim} />}
       <Reveal className={styles.textBlock}>
-        <h2 className={`${styles.heading} ${video ? styles.headingOnVideo : ""}`}>
+        <h2 className={`${styles.heading} ${hasMedia ? styles.headingOnVideo : ""}`}>
           {heading.map((line, i) => (
             <span key={i}>{line}</span>
           ))}
         </h2>
         {body && (
-          <p className={`${styles.body} ${video ? styles.bodyOnVideo : ""}`}>
+          <p className={`${styles.body} ${hasMedia ? styles.bodyOnVideo : ""}`}>
             {body.map((line, i) => (
               <span key={i}>{line}</span>
             ))}
