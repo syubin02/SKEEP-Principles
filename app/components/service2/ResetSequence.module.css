@@ -13,6 +13,7 @@
   align-items: center;
   justify-content: center;
   padding: clamp(56px, 8vw, 84px) var(--edge-padding);
+  isolation: isolate;
 }
 
 .video {
