@@ -69,7 +69,6 @@ export function LeaveNothing() {
   const hasMeasured = fullSize.width > 0 && naturalSize.width > 0;
   const cardWidth = hasMeasured ? lerp(naturalSize.width, fullSize.width, expandProgress) : undefined;
   const cardHeight = hasMeasured ? lerp(naturalSize.height, fullSize.height, expandProgress) : undefined;
-  const borderRadius = lerp(32, 0, expandProgress);
   const shadowAlpha = lerp(0.18, 0, expandProgress);
 
   return (
@@ -85,7 +84,6 @@ export function LeaveNothing() {
           style={{
             width: cardWidth,
             height: cardHeight,
-            borderRadius,
             boxShadow: `0 40px 90px rgba(14, 24, 37, ${shadowAlpha})`,
           }}
         />
