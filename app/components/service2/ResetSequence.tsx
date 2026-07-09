@@ -65,7 +65,7 @@ function drawFrame(
   }
 
   const dpr = window.devicePixelRatio || 1;
-  const fontSize = clampPx(28, 4.8, 72) * dpr;
+  const fontSize = clampPx(24, 4, 54) * dpr;
   const lineHeight = fontSize * 1.15;
   const lines = heading.split("\n");
 
