@@ -6,7 +6,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export function ContextSummary() {
   return (
     <section className={styles.section}>
-      <Reveal className={styles.summary}>
+      <Reveal className={styles.header}>
         <h2 className={styles.heading}>
           맥락은
           <br />

@@ -11,6 +11,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: clamp(24px, 4vw, 64px);
+  max-width: 720px;
 }
 
 .heading {
