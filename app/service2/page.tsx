@@ -5,6 +5,8 @@ import { LeaveNothing } from "../components/service2/LeaveNothing";
 import { ResetSequence } from "../components/service2/ResetSequence";
 import { StatementBlock } from "../components/service2/StatementBlock";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "SKEEP | Leave Nothing",
   description: "기기에는 흔적 없이, 내 맥락은 끊김 없이.",
@@ -13,7 +15,10 @@ export const metadata: Metadata = {
 export default function Service2Page() {
   return (
     <main>
-      <StatementBlock heading={["기기에는 흔적 없이", "내 맥락은 끊김 없이"]} />
+      <StatementBlock
+        heading={["기기에는 흔적 없이", "내 맥락은 끊김 없이"]}
+        video={`${BASE_PATH}/service2/statement-intro.mp4`}
+      />
       <LeaveNothing />
       <ResetSequence />
       <ContextSummary />
