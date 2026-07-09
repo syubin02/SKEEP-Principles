@@ -33,7 +33,7 @@
   width: min(929px, 48vw);
   aspect-ratio: 929.555 / 964.657;
   background: #ffffff;
-  transition: border-radius 0.1s linear, box-shadow 0.1s linear;
+  transition: box-shadow 0.1s linear;
 }
 
 .content {
