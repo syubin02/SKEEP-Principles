@@ -8,13 +8,13 @@ type Slide = {
   href?: string;
 };
 
-// Slots 0-2 have real destinations today; the rest are reserved
+// Slots 0-3 have real destinations today; the rest are reserved
 // placeholders for pages that haven't been built yet.
 const SLIDES: Slide[] = [
   { href: "/principles" },
   { href: "/service2" },
   { href: "/service3" },
-  {},
+  { href: "/negotiation" },
   {},
   {},
   {},

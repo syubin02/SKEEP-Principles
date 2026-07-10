@@ -1,0 +1,24 @@
+.section {
+  background: var(--color-bg);
+  padding: clamp(56px, 8vw, 84px) var(--edge-padding);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  background: #9e9e9e;
+  color: #ffffff;
+  border-radius: 100px;
+  padding: clamp(14px, 1.6vw, 20px) clamp(24px, 3vw, 50px);
+  font-size: clamp(16px, 2.2vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  transition: background 0.25s ease;
+}
+
+.pill:hover {
+  background: #888888;
+}
