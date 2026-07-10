@@ -16,38 +16,44 @@
 
 .box {
   position: relative;
-  width: min(640px, 100%);
-  aspect-ratio: 640 / 760;
+  width: 100%;
+  aspect-ratio: 1600 / 900;
   border-radius: 32px;
   overflow: hidden;
-  background: var(--color-bg);
+  background: #e7eaf0;
 }
 
-.card {
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+}
+
+.content {
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
-}
-
-.visual {
-  flex: 1 1 55%;
-  min-height: 0;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: clamp(24px, 6vw, 112px);
 }
 
 .textBlock {
-  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   text-align: left;
-  padding: clamp(24px, 3vw, 40px);
+  max-width: 520px;
 }
 
 .heading {
   display: flex;
   flex-direction: column;
-  font-size: clamp(18px, 2.8vw, 42px);
+  font-size: clamp(24px, 4vw, 54px);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.24;
@@ -56,8 +62,8 @@
 .body {
   display: flex;
   flex-direction: column;
-  font-size: clamp(13px, 1.6vw, 26px);
-  font-weight: 500;
+  font-size: clamp(14px, 1.8vw, 24px);
+  font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.4;
   color: var(--color-text-muted);
@@ -83,15 +89,23 @@
     background: none;
   }
 
-  .card {
+  .layer {
     position: relative;
-    opacity: 1 !important;
-    border-radius: 32px;
-    overflow: hidden;
-    background: var(--color-bg-soft);
   }
 
-  .visual {
-    aspect-ratio: 640 / 420;
+  .background {
+    position: relative;
+    aspect-ratio: 1600 / 900;
+    border-radius: 32px;
+    opacity: 1 !important;
+  }
+
+  .content {
+    padding: 32px 24px;
+  }
+
+  .heading,
+  .body {
+    opacity: 1 !important;
   }
 }

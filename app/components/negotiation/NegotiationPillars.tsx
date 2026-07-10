@@ -17,7 +17,7 @@ const PILLARS = [
   },
   {
     key: "skeep",
-    color: "#f2f4f7",
+    color: "#f5f5f5",
     title: ["경계를 존중하는", "SKEEP"],
     body: [
       "환경 운영 규칙과 물리적 한계,",
@@ -37,9 +37,14 @@ const PILLARS = [
   },
 ] as const;
 
-function clampedProgress(start: number, end: number, value: number) {
-  if (end === start) return value >= end ? 1 : 0;
-  return Math.min(Math.max((value - start) / (end - start), 0), 1);
+// Weight window keyed to a scroll delay: delay=0 (container) reacts the
+// instant this pillar becomes current, larger delays (title, then body)
+// require the scroll position to be closer before they catch up — this is
+// what produces the container -> title -> description reveal order.
+function windowWeight(stage: number, index: number, delay: number) {
+  const distance = Math.abs(stage - index);
+  const span = 1 - delay;
+  return Math.min(Math.max(1 - distance / span, 0), 1);
 }
 
 export function NegotiationPillars() {
@@ -52,7 +57,8 @@ export function NegotiationPillars() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    setStage(clampedProgress(0, 1, value) * (PILLARS.length - 1));
+    const clamped = Math.min(Math.max(value, 0), 1);
+    setStage(clamped * (PILLARS.length - 1));
   });
 
   return (
@@ -60,21 +66,28 @@ export function NegotiationPillars() {
       <section className={styles.section}>
         <div className={styles.box}>
           {PILLARS.map((pillar, i) => {
-            const weight = Math.max(0, 1 - Math.abs(stage - i));
+            const containerWeight = windowWeight(stage, i, 0);
+            const titleWeight = windowWeight(stage, i, 0.22);
+            const bodyWeight = windowWeight(stage, i, 0.44);
             return (
-              <div key={pillar.key} className={styles.card} style={{ opacity: weight }}>
-                <div className={styles.visual} style={{ background: pillar.color }} />
-                <div className={styles.textBlock}>
-                  <h2 className={styles.heading}>
-                    {pillar.title.map((line) => (
-                      <span key={line}>{line}</span>
-                    ))}
-                  </h2>
-                  <p className={styles.body}>
-                    {pillar.body.map((line) => (
-                      <span key={line}>{line}</span>
-                    ))}
-                  </p>
+              <div key={pillar.key} className={styles.layer}>
+                <div
+                  className={styles.background}
+                  style={{ background: pillar.color, opacity: containerWeight }}
+                />
+                <div className={styles.content}>
+                  <div className={styles.textBlock}>
+                    <h2 className={styles.heading} style={{ opacity: titleWeight }}>
+                      {pillar.title.map((line) => (
+                        <span key={line}>{line}</span>
+                      ))}
+                    </h2>
+                    <p className={styles.body} style={{ opacity: bodyWeight }}>
+                      {pillar.body.map((line) => (
+                        <span key={line}>{line}</span>
+                      ))}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
