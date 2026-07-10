@@ -7,6 +7,7 @@ import styles from "./NegotiationPillars.module.css";
 const PILLARS = [
   {
     key: "skip",
+    color: "#e7eaf0",
     title: ["본질만 남긴 채", "SKIP"],
     body: [
       "사용자의 SKEEP은 목적을 이루는 데",
@@ -16,6 +17,7 @@ const PILLARS = [
   },
   {
     key: "skeep",
+    color: "#f2f4f7",
     title: ["경계를 존중하는", "SKEEP"],
     body: [
       "환경 운영 규칙과 물리적 한계,",
@@ -25,6 +27,7 @@ const PILLARS = [
   },
   {
     key: "keep",
+    color: "#d4d8e0",
     title: ["모두의 흐름은", "KEEP"],
     body: [
       "SKEEP은 서로의 조건을 조율해,",
@@ -59,7 +62,8 @@ export function NegotiationPillars() {
           {PILLARS.map((pillar, i) => {
             const weight = Math.max(0, 1 - Math.abs(stage - i));
             return (
-              <div key={pillar.key} className={styles.layer} style={{ opacity: weight }}>
+              <div key={pillar.key} className={styles.card} style={{ opacity: weight }}>
+                <div className={styles.visual} style={{ background: pillar.color }} />
                 <div className={styles.textBlock}>
                   <h2 className={styles.heading}>
                     {pillar.title.map((line) => (
