@@ -164,6 +164,13 @@
   border-radius: 999px;
   padding: clamp(10px, 1.1vw, 18px) clamp(14px, 1.6vw, 28px);
   z-index: 1;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.pagination:active {
+  cursor: grabbing;
 }
 
 .dot {
