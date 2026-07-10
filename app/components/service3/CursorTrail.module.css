@@ -28,7 +28,7 @@
 
 .card {
   position: absolute;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(14, 24, 37, 0.12);
   will-change: left, top, transform;

@@ -3,16 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./CursorTrail.module.css";
 
-const CARD_COUNT = 12;
+const CARD_COUNT = 10;
 const SAMPLE_GAP = 3;
 const EASE = 0.22;
 const HISTORY_CAPACITY = (CARD_COUNT - 1) * SAMPLE_GAP + 1;
 
 // Per-card tilt, largest/front card first, tail last.
-const ROTATIONS = [-6, 8, -9, 5, -7, 9, -5, 7, -8, 4, -3, 6];
+const ROTATIONS = [-6, 8, -9, 5, -7, 9, -5, 7, -8, 4];
 
 // Card width as a percentage of the container, front (largest) to tail (smallest).
-const SIZES = [34, 30, 27, 24, 21, 18, 15, 12, 9, 7, 5, 3.5];
+const SIZES = [34, 30, 27, 24, 21, 18, 15, 12, 9, 7];
 
 // Resting arc shown before the user has moved the cursor: sweeps from the
 // bottom-right up and around to the left, mirroring the reference layout.
@@ -27,8 +27,6 @@ const IDLE_POINTS = [
   { x: 28, y: 16 },
   { x: 15, y: 27 },
   { x: 8, y: 39 },
-  { x: 5, y: 52 },
-  { x: 4, y: 64 },
 ];
 
 function lerp(from: number, to: number, t: number) {
