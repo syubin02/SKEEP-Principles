@@ -8,11 +8,28 @@ const SAMPLE_GAP = 3;
 const EASE = 0.22;
 const HISTORY_CAPACITY = (CARD_COUNT - 1) * SAMPLE_GAP + 1;
 
+const WORDS = ["서비스 이름", "제품 이름", "공간 이름"];
+
+const COLORS = [
+  "#2563eb",
+  "#16a34a",
+  "#ea580c",
+  "#dc2626",
+  "#7c3aed",
+  "#0891b2",
+  "#ca8a04",
+  "#db2777",
+];
+
 // Per-card tilt, largest/front card first, tail last.
 const ROTATIONS = [-6, 8, -9, 5, -7, 9, -5, 7, -8, 4];
 
 // Card width as a percentage of the container, front (largest) to tail (smallest).
 const SIZES = [34, 30, 27, 24, 21, 18, 15, 12, 9, 7];
+
+function lerp(from: number, to: number, t: number) {
+  return from + (to - from) * t;
+}
 
 // Resting layout shown before the user has moved the cursor: an evenly
 // spaced straight diagonal from bottom-right to top-left.
@@ -21,18 +38,27 @@ const IDLE_POINTS = Array.from({ length: CARD_COUNT }, (_, i) => {
   return { x: lerp(88, 10, t), y: lerp(88, 12, t) };
 });
 
-function lerp(from: number, to: number, t: number) {
-  return from + (to - from) * t;
-}
-
-export function CursorTrail({ images = [] }: { images?: string[] }) {
+export function CursorTrail() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const historyRef = useRef<{ x: number; y: number }[]>([]);
   const targetRef = useRef<{ x: number; y: number }>(IDLE_POINTS[0]);
   const activeRef = useRef(false);
   const positionsRef = useRef(IDLE_POINTS.map((p) => ({ ...p })));
   const [hovered, setHovered] = useState(false);
+
+  // Randomized client-side only (after mount) so the server-rendered HTML
+  // and the first client render match, avoiding a hydration mismatch.
+  useEffect(() => {
+    for (let i = 0; i < CARD_COUNT; i++) {
+      const card = cardRefs.current[i];
+      const label = labelRefs.current[i];
+      if (!card || !label) continue;
+      card.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
+      label.textContent = WORDS[Math.floor(Math.random() * WORDS.length)];
+    }
+  }, []);
 
   useEffect(() => {
     let frame: number;
@@ -105,11 +131,12 @@ export function CursorTrail({ images = [] }: { images?: string[] }) {
             zIndex: CARD_COUNT - i,
           }}
         >
-          {images[i % images.length] ? (
-            <img className={styles.image} src={images[i % images.length]} alt="" />
-          ) : (
-            <div className={styles.placeholder} data-tone={i % 3} />
-          )}
+          <span
+            ref={(node) => {
+              labelRefs.current[i] = node;
+            }}
+            className={styles.label}
+          />
         </div>
       ))}
     </div>

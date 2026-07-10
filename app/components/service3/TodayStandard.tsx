@@ -2,13 +2,6 @@ import { Reveal } from "../ui/Reveal";
 import { CursorTrail } from "./CursorTrail";
 import styles from "./TodayStandard.module.css";
 
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-const TRAIL_IMAGES = Array.from(
-  { length: 10 },
-  (_, i) => `${BASE_PATH}/service3/cursor-trail/photo-${String(i + 1).padStart(2, "0")}.png`,
-);
-
 export function TodayStandard() {
   return (
     <section className={styles.section}>
@@ -25,7 +18,7 @@ export function TodayStandard() {
         </p>
       </Reveal>
       <Reveal delay={0.1} className={styles.box}>
-        <CursorTrail images={TRAIL_IMAGES} />
+        <CursorTrail />
       </Reveal>
     </section>
   );
