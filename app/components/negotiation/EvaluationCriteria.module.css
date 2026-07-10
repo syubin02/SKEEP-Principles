@@ -34,7 +34,7 @@
 }
 
 .note {
-  font-size: clamp(12px, 1.2vw, 16px);
+  font-size: clamp(12px, 1.3vw, 16px);
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.5;
@@ -66,21 +66,21 @@
 }
 
 .cardIndex {
-  font-size: clamp(13px, 1.4vw, 20px);
+  font-size: clamp(12px, 1.3vw, 19px);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-accent);
 }
 
 .cardName {
-  font-size: clamp(20px, 2.6vw, 36px);
+  font-size: clamp(18px, 2.8vw, 42px);
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--color-text);
 }
 
 .cardKo {
-  font-size: clamp(14px, 1.6vw, 22px);
+  font-size: clamp(13px, 1.6vw, 26px);
   font-weight: 500;
   color: var(--color-text-muted);
   margin-left: 12px;
