@@ -1,8 +1,12 @@
-import { Reveal } from "../ui/Reveal";
+"use client";
+
+import { useMotionValueEvent, useScroll } from "framer-motion";
+import { useRef, useState } from "react";
 import styles from "./NegotiationPillars.module.css";
 
 const PILLARS = [
   {
+    key: "skip",
     title: ["본질만 남긴 채", "SKIP"],
     body: [
       "사용자의 SKEEP은 목적을 이루는 데",
@@ -11,6 +15,7 @@ const PILLARS = [
     ],
   },
   {
+    key: "skeep",
     title: ["경계를 존중하는", "SKEEP"],
     body: [
       "환경 운영 규칙과 물리적 한계,",
@@ -19,6 +24,7 @@ const PILLARS = [
     ],
   },
   {
+    key: "keep",
     title: ["모두의 흐름은", "KEEP"],
     body: [
       "SKEEP은 서로의 조건을 조율해,",
@@ -26,29 +32,51 @@ const PILLARS = [
       "모두의 목적이 이어질 방법을 찾습니다.",
     ],
   },
-];
+] as const;
+
+function clampedProgress(start: number, end: number, value: number) {
+  if (end === start) return value >= end ? 1 : 0;
+  return Math.min(Math.max((value - start) / (end - start), 0), 1);
+}
 
 export function NegotiationPillars() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [stage, setStage] = useState(0);
+
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    setStage(clampedProgress(0, 1, value) * (PILLARS.length - 1));
+  });
+
   return (
-    <>
-      {PILLARS.map((pillar, i) => (
-        <section key={pillar.title.join(" ")} className={styles.section}>
-          <Reveal delay={i * 0.05} className={styles.box}>
-            <div className={styles.textBlock}>
-              <h2 className={styles.heading}>
-                {pillar.title.map((line, j) => (
-                  <span key={j}>{line}</span>
-                ))}
-              </h2>
-              <p className={styles.body}>
-                {pillar.body.map((line, j) => (
-                  <span key={j}>{line}</span>
-                ))}
-              </p>
-            </div>
-          </Reveal>
-        </section>
-      ))}
-    </>
+    <div ref={wrapperRef} className={styles.wrapper}>
+      <section className={styles.section}>
+        <div className={styles.box}>
+          {PILLARS.map((pillar, i) => {
+            const weight = Math.max(0, 1 - Math.abs(stage - i));
+            return (
+              <div key={pillar.key} className={styles.layer} style={{ opacity: weight }}>
+                <div className={styles.textBlock}>
+                  <h2 className={styles.heading}>
+                    {pillar.title.map((line) => (
+                      <span key={line}>{line}</span>
+                    ))}
+                  </h2>
+                  <p className={styles.body}>
+                    {pillar.body.map((line) => (
+                      <span key={line}>{line}</span>
+                    ))}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
   );
 }
