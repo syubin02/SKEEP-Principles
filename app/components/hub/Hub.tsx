@@ -77,26 +77,32 @@ function SlideThumbnail({ thumbnail }: { thumbnail?: Thumbnail }) {
 }
 
 // Crossfades + slides the incoming/outgoing thumbnail so a slide change
-// reads as a swipe transition instead of an instant content swap.
+// reads as a swipe transition instead of an instant content swap. While
+// scrubbing the dot bar, the offset/duration shrink so rapid-fire index
+// changes read as a quick flip through frames rather than overlapping slides.
 function CardContent({
   slideKey,
   thumbnail,
   direction,
+  fast,
 }: {
   slideKey: string;
   thumbnail?: Thumbnail;
   direction: number;
+  fast?: boolean;
 }) {
+  const offset = fast ? 8 : 18;
+  const duration = fast ? 0.12 : 0.36;
   return (
     <AnimatePresence initial={false} custom={direction}>
       <motion.div
         key={slideKey}
         className={styles.thumbnailAnimWrap}
         custom={direction}
-        initial={{ opacity: 0, x: `${direction * 18}%` }}
+        initial={{ opacity: 0, x: `${direction * offset}%` }}
         animate={{ opacity: 1, x: "0%" }}
-        exit={{ opacity: 0, x: `${direction * -18}%` }}
-        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+        exit={{ opacity: 0, x: `${direction * -offset}%` }}
+        transition={{ duration, ease: [0.16, 1, 0.3, 1] }}
       >
         <SlideThumbnail thumbnail={thumbnail} />
       </motion.div>
@@ -159,6 +165,44 @@ export function Hub() {
     setActive(i);
   }
 
+  // Dragging directly along the pagination dots scrubs through slides live,
+  // following the finger position instead of advancing one at a time —
+  // matching the Vision Pro site's draggable image-scrubber pattern.
+  const paginationRef = useRef<HTMLDivElement>(null);
+  const [isScrubbing, setIsScrubbing] = useState(false);
+
+  function indexFromClientX(clientX: number) {
+    const el = paginationRef.current;
+    if (!el) return active;
+    const rect = el.getBoundingClientRect();
+    const ratio = rect.width === 0 ? 0 : (clientX - rect.left) / rect.width;
+    return Math.round(Math.min(Math.max(ratio, 0), 1) * (total - 1));
+  }
+
+  function handleScrubMove(clientX: number) {
+    const i = indexFromClientX(clientX);
+    setActive((a) => {
+      if (i === a) return a;
+      setDirection(i >= a ? 1 : -1);
+      return i;
+    });
+  }
+
+  function handleScrubStart(e: React.PointerEvent<HTMLDivElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setIsScrubbing(true);
+    handleScrubMove(e.clientX);
+  }
+
+  function handleScrubPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!isScrubbing) return;
+    handleScrubMove(e.clientX);
+  }
+
+  function handleScrubEnd() {
+    setIsScrubbing(false);
+  }
+
   // Tracks whether the pointer actually dragged (vs. a plain click/tap), so
   // a swipe doesn't also fire the card underneath it as a click.
   const wasDragging = useRef(false);
@@ -219,7 +263,12 @@ export function Hub() {
           onClick={guardClick(goPrev)}
           aria-label="이전 슬라이드"
         >
-          <CardContent slideKey={prev.href ?? `slot-${prevIndex}`} thumbnail={prev.thumbnail} direction={direction} />
+          <CardContent
+            slideKey={prev.href ?? `slot-${prevIndex}`}
+            thumbnail={prev.thumbnail}
+            direction={direction}
+            fast={isScrubbing}
+          />
         </button>
 
         {current.href ? (
@@ -229,14 +278,24 @@ export function Hub() {
             onClick={handleCenterClick}
             draggable={false}
           >
-            <CardContent slideKey={current.href} thumbnail={current.thumbnail} direction={direction} />
+            <CardContent
+              slideKey={current.href}
+              thumbnail={current.thumbnail}
+              direction={direction}
+              fast={isScrubbing}
+            />
             <span className={styles.enterButton}>
               <ArrowRightIcon />
             </span>
           </Link>
         ) : (
           <div className={`${styles.card} ${styles.cardCenter}`}>
-            <CardContent slideKey={`slot-${active}`} thumbnail={current.thumbnail} direction={direction} />
+            <CardContent
+              slideKey={`slot-${active}`}
+              thumbnail={current.thumbnail}
+              direction={direction}
+              fast={isScrubbing}
+            />
             <span className={`${styles.enterButton} ${styles.enterButtonDisabled}`} aria-hidden="true">
               <ArrowRightIcon />
             </span>
@@ -249,11 +308,23 @@ export function Hub() {
           onClick={guardClick(goNext)}
           aria-label="다음 슬라이드"
         >
-          <CardContent slideKey={next.href ?? `slot-${nextIndex}`} thumbnail={next.thumbnail} direction={direction} />
+          <CardContent
+            slideKey={next.href ?? `slot-${nextIndex}`}
+            thumbnail={next.thumbnail}
+            direction={direction}
+            fast={isScrubbing}
+          />
         </button>
       </motion.div>
 
-      <div className={styles.pagination}>
+      <div
+        ref={paginationRef}
+        className={styles.pagination}
+        onPointerDown={handleScrubStart}
+        onPointerMove={handleScrubPointerMove}
+        onPointerUp={handleScrubEnd}
+        onPointerCancel={handleScrubEnd}
+      >
         {SLIDES.map((_, i) => (
           <button
             key={i}
