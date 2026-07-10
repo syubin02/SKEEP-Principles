@@ -45,21 +45,21 @@
 }
 
 .title {
-  font-size: clamp(24px, 2.8vw, 48px);
+  font-size: clamp(18px, 2.8vw, 42px);
   font-weight: 600;
   letter-spacing: -0.04em;
   color: var(--color-text);
 }
 
 .subtitle {
-  font-size: clamp(14px, 1.6vw, 28px);
+  font-size: clamp(16px, 1.8vw, 28px);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-text);
 }
 
 .body {
-  font-size: clamp(13px, 1.4vw, 24px);
+  font-size: clamp(13px, 1.6vw, 26px);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.5;
