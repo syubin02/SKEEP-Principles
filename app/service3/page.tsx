@@ -16,9 +16,7 @@ export default function Service3Page() {
       <StatementBlock heading={["당신다운 경험의 시작"]} background="#e7eaf0" />
       <TodayStandard />
       <GrowthCycle />
-      <SkeepExperience highlightIndex={0} visual="intent" />
-      <SkeepExperience highlightIndex={1} visual="beyond" />
-      <SkeepExperience highlightIndex={2} visual="seamless" />
+      <SkeepExperience />
       <ClosingCard />
     </main>
   );
