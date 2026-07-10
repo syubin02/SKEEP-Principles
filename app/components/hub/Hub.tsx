@@ -4,22 +4,73 @@ import Link from "next/link";
 import { useState } from "react";
 import styles from "./Hub.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+type Thumbnail =
+  | { kind: "video"; src: string; heading: string[] }
+  | { kind: "image"; src: string; heading: string[] }
+  | { kind: "color"; color: string; heading: string[] };
+
 type Slide = {
   href?: string;
+  thumbnail?: Thumbnail;
 };
 
+// Each thumbnail mirrors that page's first section, so the slide preview
+// is the real hero/statement content rather than a flat placeholder.
 // Slots 0-3 have real destinations today; the rest are reserved
 // placeholders for pages that haven't been built yet.
 const SLIDES: Slide[] = [
-  { href: "/principles" },
-  { href: "/service2" },
-  { href: "/service3" },
-  { href: "/negotiation" },
+  {
+    href: "/principles",
+    thumbnail: { kind: "video", src: `${BASE_PATH}/hero/focus.mp4`, heading: ["When you need", "Focus"] },
+  },
+  {
+    href: "/service2",
+    thumbnail: {
+      kind: "image",
+      src: `${BASE_PATH}/service2/statement-bg.jpg`,
+      heading: ["기기에는 흔적 없이", "내 맥락은 끊김 없이"],
+    },
+  },
+  {
+    href: "/service3",
+    thumbnail: { kind: "color", color: "#e7eaf0", heading: ["당신다운 경험의 시작"] },
+  },
+  {
+    href: "/negotiation",
+    thumbnail: { kind: "color", color: "#e7eaf0", heading: ["당신이 원하는 그대로", "가장 자연스럽게"] },
+  },
   {},
   {},
   {},
   {},
 ];
+
+function SlideThumbnail({ thumbnail }: { thumbnail?: Thumbnail }) {
+  if (!thumbnail) return null;
+  const isDark = thumbnail.kind !== "color";
+  return (
+    <div className={styles.thumbnail}>
+      {thumbnail.kind === "video" && (
+        <video className={styles.thumbnailMedia} src={thumbnail.src} autoPlay muted loop playsInline />
+      )}
+      {thumbnail.kind === "image" && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className={styles.thumbnailMedia} src={thumbnail.src} alt="" />
+      )}
+      {thumbnail.kind === "color" && (
+        <div className={styles.thumbnailMedia} style={{ background: thumbnail.color }} />
+      )}
+      {isDark && <div className={styles.thumbnailScrim} />}
+      <p className={isDark ? styles.thumbnailHeading : `${styles.thumbnailHeading} ${styles.thumbnailHeadingDark}`}>
+        {thumbnail.heading.map((line) => (
+          <span key={line}>{line}</span>
+        ))}
+      </p>
+    </div>
+  );
+}
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -55,6 +106,8 @@ export function Hub() {
   const prevIndex = mod(active - 1, total);
   const nextIndex = mod(active + 1, total);
   const current = SLIDES[active];
+  const prev = SLIDES[prevIndex];
+  const next = SLIDES[nextIndex];
 
   return (
     <div className={styles.hub}>
@@ -76,16 +129,20 @@ export function Hub() {
           className={`${styles.card} ${styles.cardSide}`}
           onClick={() => setActive(prevIndex)}
           aria-label="이전 슬라이드"
-        />
+        >
+          <SlideThumbnail thumbnail={prev.thumbnail} />
+        </button>
 
         {current.href ? (
           <Link href={current.href} className={`${styles.card} ${styles.cardCenter}`}>
+            <SlideThumbnail thumbnail={current.thumbnail} />
             <span className={styles.enterButton}>
               <ArrowRightIcon />
             </span>
           </Link>
         ) : (
           <div className={`${styles.card} ${styles.cardCenter}`}>
+            <SlideThumbnail thumbnail={current.thumbnail} />
             <span className={`${styles.enterButton} ${styles.enterButtonDisabled}`} aria-hidden="true">
               <ArrowRightIcon />
             </span>
@@ -97,7 +154,9 @@ export function Hub() {
           className={`${styles.card} ${styles.cardSide}`}
           onClick={() => setActive(nextIndex)}
           aria-label="다음 슬라이드"
-        />
+        >
+          <SlideThumbnail thumbnail={next.thumbnail} />
+        </button>
       </div>
 
       <div className={styles.pagination}>
