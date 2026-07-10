@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { motion, type PanInfo } from "framer-motion";
+import { useRef, useState } from "react";
 import styles from "./Hub.module.css";
+
+const DRAG_OFFSET_THRESHOLD = 80;
+const DRAG_VELOCITY_THRESHOLD = 400;
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -109,6 +113,37 @@ export function Hub() {
   const prev = SLIDES[prevIndex];
   const next = SLIDES[nextIndex];
 
+  // Tracks whether the pointer actually dragged (vs. a plain click/tap), so
+  // a swipe doesn't also fire the card underneath it as a click.
+  const wasDragging = useRef(false);
+
+  function handleDragStart() {
+    wasDragging.current = true;
+  }
+
+  function handleDragEnd(_: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) {
+    if (info.offset.x < -DRAG_OFFSET_THRESHOLD || info.velocity.x < -DRAG_VELOCITY_THRESHOLD) {
+      setActive((a) => mod(a + 1, total));
+    } else if (info.offset.x > DRAG_OFFSET_THRESHOLD || info.velocity.x > DRAG_VELOCITY_THRESHOLD) {
+      setActive((a) => mod(a - 1, total));
+    }
+    // Let the click handlers see the flag first, then clear it for the next gesture.
+    setTimeout(() => {
+      wasDragging.current = false;
+    }, 0);
+  }
+
+  function guardClick(handler: () => void) {
+    return () => {
+      if (wasDragging.current) return;
+      handler();
+    };
+  }
+
+  function handleCenterClick(e: React.MouseEvent) {
+    if (wasDragging.current) e.preventDefault();
+  }
+
   return (
     <div className={styles.hub}>
       <header className={styles.header}>
@@ -123,18 +158,30 @@ export function Hub() {
         </div>
       </header>
 
-      <div className={styles.stage}>
+      <motion.div
+        className={styles.stage}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         <button
           type="button"
           className={`${styles.card} ${styles.cardSide}`}
-          onClick={() => setActive(prevIndex)}
+          onClick={guardClick(() => setActive(prevIndex))}
           aria-label="이전 슬라이드"
         >
           <SlideThumbnail thumbnail={prev.thumbnail} />
         </button>
 
         {current.href ? (
-          <Link href={current.href} className={`${styles.card} ${styles.cardCenter}`}>
+          <Link
+            href={current.href}
+            className={`${styles.card} ${styles.cardCenter}`}
+            onClick={handleCenterClick}
+            draggable={false}
+          >
             <SlideThumbnail thumbnail={current.thumbnail} />
             <span className={styles.enterButton}>
               <ArrowRightIcon />
@@ -152,12 +199,12 @@ export function Hub() {
         <button
           type="button"
           className={`${styles.card} ${styles.cardSide}`}
-          onClick={() => setActive(nextIndex)}
+          onClick={guardClick(() => setActive(nextIndex))}
           aria-label="다음 슬라이드"
         >
           <SlideThumbnail thumbnail={next.thumbnail} />
         </button>
-      </div>
+      </motion.div>
 
       <div className={styles.pagination}>
         {SLIDES.map((_, i) => (
