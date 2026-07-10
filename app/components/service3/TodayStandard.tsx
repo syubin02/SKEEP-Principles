@@ -1,4 +1,5 @@
 import { Reveal } from "../ui/Reveal";
+import { CursorTrail } from "./CursorTrail";
 import styles from "./TodayStandard.module.css";
 
 export function TodayStandard() {
@@ -16,7 +17,9 @@ export function TodayStandard() {
           완성하죠.
         </p>
       </Reveal>
-      <Reveal delay={0.1} className={styles.box} />
+      <Reveal delay={0.1} className={styles.box}>
+        <CursorTrail />
+      </Reveal>
     </section>
   );
 }
