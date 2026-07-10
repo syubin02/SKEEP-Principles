@@ -1,0 +1,25 @@
+import type { Metadata } from "next";
+import { StatementBlock } from "../components/service2/StatementBlock";
+import { ClosingCard } from "../components/service3/ClosingCard";
+import { GrowthCycle } from "../components/service3/GrowthCycle";
+import { SkeepExperience } from "../components/service3/SkeepExperience";
+import { TodayStandard } from "../components/service3/TodayStandard";
+
+export const metadata: Metadata = {
+  title: "SKEEP | Personalization",
+  description: "사용할수록 나에게 맞춰지는, SKEEP의 개인화 경험.",
+};
+
+export default function Service3Page() {
+  return (
+    <main>
+      <StatementBlock heading={["당신다운 경험의 시작"]} background="#e7eaf0" />
+      <TodayStandard />
+      <GrowthCycle />
+      <SkeepExperience highlightIndex={0} visual="intent" />
+      <SkeepExperience highlightIndex={1} visual="beyond" />
+      <SkeepExperience highlightIndex={2} visual="seamless" />
+      <ClosingCard />
+    </main>
+  );
+}
