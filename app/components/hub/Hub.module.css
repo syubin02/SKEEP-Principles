@@ -65,6 +65,12 @@
   align-items: center;
   justify-content: center;
   gap: clamp(16px, 3.3vw, 64px);
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.stage:active {
+  cursor: grabbing;
 }
 
 .card {
