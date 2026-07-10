@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - claude/principles-parallax-website-cyjl2p
+      - claude/skeep-new-page-vyfoi0
   workflow_dispatch:
 
 permissions:
