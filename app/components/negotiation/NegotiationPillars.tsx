@@ -47,6 +47,14 @@ function windowWeight(stage: number, index: number, delay: number) {
   return Math.min(Math.max(1 - distance / span, 0), 1);
 }
 
+// Text rises up into place as it fades in, instead of just crossfading flat.
+function riseStyle(weight: number) {
+  return {
+    opacity: weight,
+    transform: `translateY(${(1 - weight) * 28}px)`,
+  };
+}
+
 export function NegotiationPillars() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stage, setStage] = useState(0);
@@ -77,12 +85,12 @@ export function NegotiationPillars() {
                 />
                 <div className={styles.content}>
                   <div className={styles.textBlock}>
-                    <h2 className={styles.heading} style={{ opacity: titleWeight }}>
+                    <h2 className={styles.heading} style={riseStyle(titleWeight)}>
                       {pillar.title.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
                     </h2>
-                    <p className={styles.body} style={{ opacity: bodyWeight }}>
+                    <p className={styles.body} style={riseStyle(bodyWeight)}>
                       {pillar.body.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
