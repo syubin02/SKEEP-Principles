@@ -14,20 +14,12 @@ const ROTATIONS = [-6, 8, -9, 5, -7, 9, -5, 7, -8, 4];
 // Card width as a percentage of the container, front (largest) to tail (smallest).
 const SIZES = [34, 30, 27, 24, 21, 18, 15, 12, 9, 7];
 
-// Resting arc shown before the user has moved the cursor: sweeps from the
-// bottom-right up and around to the left, mirroring the reference layout.
-const IDLE_POINTS = [
-  { x: 58, y: 90 },
-  { x: 70, y: 74 },
-  { x: 82, y: 60 },
-  { x: 90, y: 44 },
-  { x: 84, y: 28 },
-  { x: 68, y: 15 },
-  { x: 47, y: 10 },
-  { x: 28, y: 16 },
-  { x: 15, y: 27 },
-  { x: 8, y: 39 },
-];
+// Resting layout shown before the user has moved the cursor: an evenly
+// spaced straight diagonal from bottom-right to top-left.
+const IDLE_POINTS = Array.from({ length: CARD_COUNT }, (_, i) => {
+  const t = i / (CARD_COUNT - 1);
+  return { x: lerp(88, 10, t), y: lerp(88, 12, t) };
+});
 
 function lerp(from: number, to: number, t: number) {
   return from + (to - from) * t;
