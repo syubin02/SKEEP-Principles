@@ -41,7 +41,7 @@
 .diagram {
   position: relative;
   width: 100%;
-  aspect-ratio: 1600 / 560;
+  aspect-ratio: 1600 / 780;
   border-radius: 32px;
   overflow: hidden;
   background: #e7eaf0;
