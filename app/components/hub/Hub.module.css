@@ -82,6 +82,11 @@
   overflow: hidden;
 }
 
+.thumbnailAnimWrap {
+  position: absolute;
+  inset: 0;
+}
+
 .thumbnail {
   position: absolute;
   inset: 0;
