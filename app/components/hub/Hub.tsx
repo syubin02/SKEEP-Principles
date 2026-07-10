@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, type PanInfo } from "framer-motion";
+import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { useRef, useState } from "react";
 import styles from "./Hub.module.css";
 
@@ -76,6 +76,34 @@ function SlideThumbnail({ thumbnail }: { thumbnail?: Thumbnail }) {
   );
 }
 
+// Crossfades + slides the incoming/outgoing thumbnail so a slide change
+// reads as a swipe transition instead of an instant content swap.
+function CardContent({
+  slideKey,
+  thumbnail,
+  direction,
+}: {
+  slideKey: string;
+  thumbnail?: Thumbnail;
+  direction: number;
+}) {
+  return (
+    <AnimatePresence initial={false} custom={direction}>
+      <motion.div
+        key={slideKey}
+        className={styles.thumbnailAnimWrap}
+        custom={direction}
+        initial={{ opacity: 0, x: `${direction * 18}%` }}
+        animate={{ opacity: 1, x: "0%" }}
+        exit={{ opacity: 0, x: `${direction * -18}%` }}
+        transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <SlideThumbnail thumbnail={thumbnail} />
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
@@ -106,12 +134,30 @@ function DisplayIcon() {
 
 export function Hub() {
   const [active, setActive] = useState(0);
+  // +1 means the slide entering is coming from the right (swiped left, "next");
+  // -1 means it's coming from the left ("prev"). Drives CardContent's slide direction.
+  const [direction, setDirection] = useState(1);
   const total = SLIDES.length;
   const prevIndex = mod(active - 1, total);
   const nextIndex = mod(active + 1, total);
   const current = SLIDES[active];
   const prev = SLIDES[prevIndex];
   const next = SLIDES[nextIndex];
+
+  function goNext() {
+    setDirection(1);
+    setActive((a) => mod(a + 1, total));
+  }
+
+  function goPrev() {
+    setDirection(-1);
+    setActive((a) => mod(a - 1, total));
+  }
+
+  function goTo(i: number) {
+    setDirection(i >= active ? 1 : -1);
+    setActive(i);
+  }
 
   // Tracks whether the pointer actually dragged (vs. a plain click/tap), so
   // a swipe doesn't also fire the card underneath it as a click.
@@ -123,9 +169,9 @@ export function Hub() {
 
   function handleDragEnd(_: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) {
     if (info.offset.x < -DRAG_OFFSET_THRESHOLD || info.velocity.x < -DRAG_VELOCITY_THRESHOLD) {
-      setActive((a) => mod(a + 1, total));
+      goNext();
     } else if (info.offset.x > DRAG_OFFSET_THRESHOLD || info.velocity.x > DRAG_VELOCITY_THRESHOLD) {
-      setActive((a) => mod(a - 1, total));
+      goPrev();
     }
     // Let the click handlers see the flag first, then clear it for the next gesture.
     setTimeout(() => {
@@ -162,17 +208,18 @@ export function Hub() {
         className={styles.stage}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
+        dragElastic={0.45}
+        dragTransition={{ bounceStiffness: 420, bounceDamping: 32 }}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <button
           type="button"
           className={`${styles.card} ${styles.cardSide}`}
-          onClick={guardClick(() => setActive(prevIndex))}
+          onClick={guardClick(goPrev)}
           aria-label="이전 슬라이드"
         >
-          <SlideThumbnail thumbnail={prev.thumbnail} />
+          <CardContent slideKey={prev.href ?? `slot-${prevIndex}`} thumbnail={prev.thumbnail} direction={direction} />
         </button>
 
         {current.href ? (
@@ -182,14 +229,14 @@ export function Hub() {
             onClick={handleCenterClick}
             draggable={false}
           >
-            <SlideThumbnail thumbnail={current.thumbnail} />
+            <CardContent slideKey={current.href} thumbnail={current.thumbnail} direction={direction} />
             <span className={styles.enterButton}>
               <ArrowRightIcon />
             </span>
           </Link>
         ) : (
           <div className={`${styles.card} ${styles.cardCenter}`}>
-            <SlideThumbnail thumbnail={current.thumbnail} />
+            <CardContent slideKey={`slot-${active}`} thumbnail={current.thumbnail} direction={direction} />
             <span className={`${styles.enterButton} ${styles.enterButtonDisabled}`} aria-hidden="true">
               <ArrowRightIcon />
             </span>
@@ -199,10 +246,10 @@ export function Hub() {
         <button
           type="button"
           className={`${styles.card} ${styles.cardSide}`}
-          onClick={guardClick(() => setActive(nextIndex))}
+          onClick={guardClick(goNext)}
           aria-label="다음 슬라이드"
         >
-          <SlideThumbnail thumbnail={next.thumbnail} />
+          <CardContent slideKey={next.href ?? `slot-${nextIndex}`} thumbnail={next.thumbnail} direction={direction} />
         </button>
       </motion.div>
 
@@ -212,7 +259,7 @@ export function Hub() {
             key={i}
             type="button"
             className={`${styles.dot} ${i === active ? styles.dotActive : ""}`}
-            onClick={() => setActive(i)}
+            onClick={() => goTo(i)}
             aria-label={`${i + 1}번 슬라이드로 이동`}
             aria-current={i === active}
           />
