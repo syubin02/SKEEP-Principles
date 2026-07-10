@@ -49,28 +49,19 @@
   pointer-events: none;
 }
 
-.image {
+.label {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.92) brightness(1.03);
-}
-
-.placeholder {
-  position: absolute;
-  inset: 0;
-}
-
-.placeholder[data-tone="0"] {
-  background: linear-gradient(135deg, #d7dce4, #eef1f5);
-}
-
-.placeholder[data-tone="1"] {
-  background: linear-gradient(135deg, #c7501f, #e7854a);
-}
-
-.placeholder[data-tone="2"] {
-  background: linear-gradient(135deg, #4c5a66, #8b96a1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8%;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(9px, 1.4vw, 16px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: #ffffff;
+  word-break: keep-all;
 }
