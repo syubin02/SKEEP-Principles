@@ -60,26 +60,30 @@
 }
 
 .watermark {
-  position: absolute;
-  left: 8%;
-  top: 22%;
   font-size: clamp(48px, 6.2vw, 96px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #cdd0d6;
+  color: #0e1825;
   text-transform: capitalize;
 }
 
 .invertHover {
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff3d1;
   pointer-events: auto;
 }
 
 .invertOverlay {
   position: absolute;
   inset: 0;
-  background: #14171c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0e1825;
   opacity: 0;
   clip-path: circle(0px at 50% 50%);
   transition: opacity 0.15s ease;
@@ -87,13 +91,10 @@
 }
 
 .watermarkInvert {
-  position: absolute;
-  left: 8%;
-  top: 22%;
   font-size: clamp(48px, 6.2vw, 96px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #e7eaf0;
+  color: #fff3d1;
   text-transform: capitalize;
 }
 
