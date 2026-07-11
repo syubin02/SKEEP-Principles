@@ -1,8 +1,10 @@
 "use client";
 
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, type MouseEventHandler } from "react";
 import styles from "./SkeepExperience.module.css";
+
+const INVERT_RADIUS = 90;
 
 const LINES = [
   "사용자의 의도를 앞서 읽고",
@@ -31,7 +33,35 @@ function clampedProgress(start: number, end: number, value: number) {
 }
 
 function IntentVisual() {
-  return <span className={styles.watermark}>Intent</span>;
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
+    const rect = wrapRef.current?.getBoundingClientRect();
+    if (!rect || !overlayRef.current) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    overlayRef.current.style.clipPath = `circle(${INVERT_RADIUS}px at ${x}px ${y}px)`;
+    overlayRef.current.style.opacity = "1";
+  };
+
+  const handleMouseLeave = () => {
+    if (overlayRef.current) overlayRef.current.style.opacity = "0";
+  };
+
+  return (
+    <div
+      ref={wrapRef}
+      className={styles.invertHover}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span className={styles.watermark}>Intent</span>
+      <div ref={overlayRef} className={styles.invertOverlay}>
+        <span className={styles.watermarkInvert}>Intent</span>
+      </div>
+    </div>
+  );
 }
 
 function BeyondVisual() {
