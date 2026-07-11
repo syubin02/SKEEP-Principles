@@ -6,6 +6,7 @@ import styles from "./SkeepExperience.module.css";
 
 const INVERT_RADIUS = 90;
 const SNAP_IDLE_DELAY = 140;
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const LINES = [
   "사용자의 의도를 앞서 읽고",
@@ -77,27 +78,14 @@ function BeyondVisual() {
 
 function SeamlessVisual() {
   return (
-    <svg
-      className={styles.arches}
-      viewBox="0 0 400 220"
-      preserveAspectRatio="xMidYMax meet"
-      aria-hidden="true"
-    >
-      <path
-        d="M20 200 C20 100, 110 100, 110 200 C110 100, 200 100, 200 200 C200 100, 290 100, 290 200 C290 100, 380 100, 380 200"
-        fill="none"
-        stroke="url(#archGradient)"
-        strokeWidth="26"
-        strokeLinecap="round"
-      />
-      <defs>
-        <linearGradient id="archGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#9aa0ab" />
-          <stop offset="50%" stopColor="#d9dce1" />
-          <stop offset="100%" stopColor="#7d838d" />
-        </linearGradient>
-      </defs>
-    </svg>
+    <video
+      className={styles.seamlessVideo}
+      src={`${BASE_PATH}/service3/seamless-bg.mp4`}
+      autoPlay
+      muted
+      loop
+      playsInline
+    />
   );
 }
 
