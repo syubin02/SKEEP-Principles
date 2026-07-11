@@ -1,10 +1,9 @@
 "use client";
 
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useEffect, useRef, useState, type MouseEventHandler } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./SkeepExperience.module.css";
 
-const INVERT_RADIUS = 90;
 const SNAP_IDLE_DELAY = 140;
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -35,34 +34,15 @@ function clampedProgress(start: number, end: number, value: number) {
 }
 
 function IntentVisual() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
-    const rect = wrapRef.current?.getBoundingClientRect();
-    if (!rect || !overlayRef.current) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    overlayRef.current.style.clipPath = `circle(${INVERT_RADIUS}px at ${x}px ${y}px)`;
-    overlayRef.current.style.opacity = "1";
-  };
-
-  const handleMouseLeave = () => {
-    if (overlayRef.current) overlayRef.current.style.opacity = "0";
-  };
-
   return (
-    <div
-      ref={wrapRef}
-      className={styles.invertHover}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <span className={styles.watermark}>Intent</span>
-      <div ref={overlayRef} className={styles.invertOverlay}>
-        <span className={styles.watermarkInvert}>Intent</span>
-      </div>
-    </div>
+    <video
+      className={styles.intentVideo}
+      src={`${BASE_PATH}/service3/intent-bg.mp4`}
+      autoPlay
+      muted
+      loop
+      playsInline
+    />
   );
 }
 
