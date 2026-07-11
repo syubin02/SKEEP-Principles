@@ -4,6 +4,8 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useRef, useState } from "react";
 import styles from "./Detour.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const LINE_RANGES: [number, number][] = [
   [0.05, 0.22],
   [0.22, 0.39],
@@ -37,6 +39,14 @@ export function Detour() {
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
       <section className={styles.section}>
+        <video
+          className={styles.bgVideo}
+          src={`${BASE_PATH}/detour/bg.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
         <div className={styles.textBlock}>
           <h2 className={styles.heading}>
             <span style={lineStyle(lineProgress[0])}>우회하는 것 또한</span>
