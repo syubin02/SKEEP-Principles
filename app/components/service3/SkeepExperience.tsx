@@ -145,11 +145,7 @@ export function SkeepExperience() {
     <div ref={wrapperRef} className={styles.wrapper}>
       <section className={styles.section}>
         <div className={styles.textBlock}>
-          <p className={styles.eyebrow}>
-            Skeep
-            <br />
-            Experience
-          </p>
+          <p className={styles.eyebrow}>Skeep Experience</p>
           <h2 className={styles.heading}>
             {LINES.map((line, i) => {
               const weight = Math.max(0, 1 - Math.abs(stage - i));
@@ -160,6 +156,18 @@ export function SkeepExperience() {
               );
             })}
           </h2>
+          <div className={styles.captionStack}>
+            {STAGES.map((s, i) => {
+              const weight = Math.max(0, 1 - Math.abs(stage - i));
+              return (
+                <div key={s.key} className={styles.caption} style={{ opacity: weight }}>
+                  {s.caption.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className={styles.box}>
           {STAGES.map((s, i) => {
@@ -168,11 +176,6 @@ export function SkeepExperience() {
             return (
               <div key={s.key} className={styles.visualLayer} style={{ opacity: weight }}>
                 <Visual />
-                <div className={styles.caption}>
-                  {s.caption.map((line) => (
-                    <p key={line}>{line}</p>
-                  ))}
-                </div>
               </div>
             );
           })}
