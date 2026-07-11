@@ -1,6 +1,8 @@
 import { Reveal } from "../ui/Reveal";
 import styles from "./GrowthCycle.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const CARDS = [
   {
     title: "Learning",
@@ -23,9 +25,14 @@ function CardVisual({ variant }: { variant: (typeof CARDS)[number]["variant"] })
   if (variant === "learning") {
     return (
       <div className={styles.visual}>
-        <span className={`${styles.ring} ${styles.ring1}`} />
-        <span className={`${styles.ring} ${styles.ring2}`} />
-        <span className={`${styles.ring} ${styles.ring3}`} />
+        <video
+          className={styles.learningVideo}
+          src={`${BASE_PATH}/service3/learning-bg.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
       </div>
     );
   }
