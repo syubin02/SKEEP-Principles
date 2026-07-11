@@ -1,114 +1,120 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, type MouseEventHandler } from "react";
 import styles from "./CursorTrail.module.css";
 
-const CARD_COUNT = 10;
-const SAMPLE_GAP = 3;
-const EASE = 0.22;
-const HISTORY_CAPACITY = (CARD_COUNT - 1) * SAMPLE_GAP + 1;
+const STRIPE_COUNT = 11;
+const EASE = 0.16;
+// The anchor stays near the box's bottom-right corner so the stripes always
+// fill the frame; the mouse only nudges it within a limited window instead
+// of pinning it to the raw cursor position (which would collapse the bands
+// into a sliver whenever the cursor nears an edge).
+const BASE_RATIO = { x: 0.9, y: 0.9 };
+const SHIFT_RATIO = 0.14;
 
-const WORDS = ["서비스 이름", "제품 이름", "공간 이름"];
-
-const COLORS = [
-  "#2563eb",
-  "#16a34a",
-  "#ea580c",
-  "#dc2626",
-  "#7c3aed",
-  "#0891b2",
-  "#ca8a04",
-  "#db2777",
+// SKEEP's Red brand ramp (5 -> 90), darkest to lightest, so the concentric
+// bands read as the site's own color chip rather than a generic rainbow.
+const STRIPE_COLORS = [
+  "#70002d",
+  "#94003b",
+  "#b80049",
+  "#e0005a",
+  "#ff0a6c",
+  "#ff428e",
+  "#ff7aaf",
+  "#ffa3c8",
+  "#ffcce0",
+  "#ffe0ed",
+  "#fff0f6",
 ];
-
-// Per-card tilt, largest/front card first, tail last.
-const ROTATIONS = [-6, 8, -9, 5, -7, 9, -5, 7, -8, 4];
-
-// Card width as a percentage of the container, front (largest) to tail (smallest).
-const SIZES = [34, 30, 27, 24, 21, 18, 15, 12, 9, 7];
 
 function lerp(from: number, to: number, t: number) {
   return from + (to - from) * t;
 }
 
-// Resting layout shown before the user has moved the cursor: an evenly
-// spaced straight diagonal from bottom-right to top-left.
-const IDLE_POINTS = Array.from({ length: CARD_COUNT }, (_, i) => {
-  const t = i / (CARD_COUNT - 1);
-  return { x: lerp(88, 10, t), y: lerp(88, 12, t) };
-});
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
 
+// Maps a 0-1 position along one axis to an anchor ratio that stays close
+// to BASE_RATIO, only nudged toward the mouse within SHIFT_RATIO.
+function anchorRatio(base: number, mouseRatio: number) {
+  return clamp(base + (mouseRatio - 0.5) * 2 * SHIFT_RATIO, base - SHIFT_RATIO, base + SHIFT_RATIO);
+}
+
+// Each stripe is a square anchored by its bottom-right corner to the same
+// point (the cursor), with its opposite corner rounded into a quarter
+// circle. Stacking them largest-to-smallest exposes each layer as an
+// L-shaped band, so the whole stack reads as concentric ribbons bending
+// around a vanishing point that follows the mouse.
 export function CursorTrail() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const historyRef = useRef<{ x: number; y: number }[]>([]);
-  const targetRef = useRef<{ x: number; y: number }>(IDLE_POINTS[0]);
-  const activeRef = useRef(false);
-  const positionsRef = useRef(IDLE_POINTS.map((p) => ({ ...p })));
-  const [hovered, setHovered] = useState(false);
+  const stripeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dimsRef = useRef({ width: 0, height: 0 });
+  const currentRef = useRef({ x: 0, y: 0 });
+  const targetRef = useRef({ x: 0, y: 0 });
 
-  // Randomized client-side only (after mount) so the server-rendered HTML
-  // and the first client render match, avoiding a hydration mismatch.
-  useEffect(() => {
-    for (let i = 0; i < CARD_COUNT; i++) {
-      const card = cardRefs.current[i];
-      const label = labelRefs.current[i];
-      if (!card || !label) continue;
-      card.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
-      label.textContent = WORDS[Math.floor(Math.random() * WORDS.length)];
-    }
-  }, []);
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
 
-  useEffect(() => {
+    const applySizes = () => {
+      const { offsetWidth: width, offsetHeight: height } = el;
+      dimsRef.current = { width, height };
+      const diag = Math.hypot(width, height);
+      stripeRefs.current.forEach((node, i) => {
+        if (!node) return;
+        const size = diag * (1 - i / STRIPE_COUNT);
+        node.style.width = `${size}px`;
+        node.style.height = `${size}px`;
+        node.style.borderTopLeftRadius = `${size}px`;
+      });
+      const idle = { x: width * BASE_RATIO.x, y: height * BASE_RATIO.y };
+      currentRef.current = idle;
+      targetRef.current = idle;
+    };
+
+    applySizes();
+    const observer = new ResizeObserver(applySizes);
+    observer.observe(el);
+
     let frame: number;
-
     const tick = () => {
-      const active = activeRef.current;
-      historyRef.current.unshift(active ? targetRef.current : IDLE_POINTS[0]);
-      if (historyRef.current.length > HISTORY_CAPACITY) {
-        historyRef.current.length = HISTORY_CAPACITY;
-      }
+      const current = currentRef.current;
+      current.x = lerp(current.x, targetRef.current.x, EASE);
+      current.y = lerp(current.y, targetRef.current.y, EASE);
 
-      for (let i = 0; i < CARD_COUNT; i++) {
-        const desired = active
-          ? historyRef.current[Math.min(i * SAMPLE_GAP, historyRef.current.length - 1)] ??
-            IDLE_POINTS[i]
-          : IDLE_POINTS[i];
-
-        const current = positionsRef.current[i];
-        current.x = lerp(current.x, desired.x, EASE);
-        current.y = lerp(current.y, desired.y, EASE);
-
-        const node = cardRefs.current[i];
-        if (node) {
-          node.style.left = `${current.x}%`;
-          node.style.top = `${current.y}%`;
-          node.style.transform = `translate(-50%, -50%) rotate(${ROTATIONS[i]}deg)`;
-        }
-      }
+      const { width, height } = dimsRef.current;
+      stripeRefs.current.forEach((node) => {
+        if (!node) return;
+        node.style.right = `${width - current.x}px`;
+        node.style.bottom = `${height - current.y}px`;
+      });
 
       frame = requestAnimationFrame(tick);
     };
-
     frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
-  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (e) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
+    const mouseXRatio = (e.clientX - rect.left) / rect.width;
+    const mouseYRatio = (e.clientY - rect.top) / rect.height;
     targetRef.current = {
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
+      x: rect.width * anchorRatio(BASE_RATIO.x, mouseXRatio),
+      y: rect.height * anchorRatio(BASE_RATIO.y, mouseYRatio),
     };
-    activeRef.current = true;
-    if (!hovered) setHovered(true);
   };
 
   const handleMouseLeave = () => {
-    activeRef.current = false;
-    setHovered(false);
+    const { width, height } = dimsRef.current;
+    targetRef.current = { x: width * BASE_RATIO.x, y: height * BASE_RATIO.y };
   };
 
   return (
@@ -118,26 +124,16 @@ export function CursorTrail() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <p className={`${styles.hint} ${hovered ? styles.hintHidden : ""}`}>Move your cursor</p>
-      {Array.from({ length: CARD_COUNT }).map((_, i) => (
+      <div className={styles.base} />
+      {STRIPE_COLORS.map((color, i) => (
         <div
-          key={i}
+          key={color}
           ref={(node) => {
-            cardRefs.current[i] = node;
+            stripeRefs.current[i] = node;
           }}
-          className={styles.card}
-          style={{
-            width: `${SIZES[i]}%`,
-            zIndex: CARD_COUNT - i,
-          }}
-        >
-          <span
-            ref={(node) => {
-              labelRefs.current[i] = node;
-            }}
-            className={styles.label}
-          />
-        </div>
+          className={styles.stripe}
+          style={{ background: color, zIndex: i + 1 }}
+        />
       ))}
     </div>
   );
