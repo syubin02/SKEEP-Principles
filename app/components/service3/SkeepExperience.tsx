@@ -1,10 +1,11 @@
 "use client";
 
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useRef, useState, type MouseEventHandler } from "react";
+import { useEffect, useRef, useState, type MouseEventHandler } from "react";
 import styles from "./SkeepExperience.module.css";
 
 const INVERT_RADIUS = 90;
+const SNAP_IDLE_DELAY = 140;
 
 const LINES = [
   "사용자의 의도를 앞서 읽고",
@@ -118,6 +119,39 @@ export function SkeepExperience() {
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     setStage(clampedProgress(0, 1, value) * (STAGES.length - 1));
   });
+
+  // Once the scroll comes to rest while a stage is only partway crossfaded,
+  // gently pull it the rest of the way to the nearest stage instead of
+  // leaving the transition stuck in between.
+  useEffect(() => {
+    let idleTimer: ReturnType<typeof setTimeout>;
+
+    const handleScroll = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+        const scrollRange = wrapper.offsetHeight - window.innerHeight;
+        if (scrollRange <= 0) return;
+        const wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
+        const current = window.scrollY;
+        if (current < wrapperTop || current > wrapperTop + scrollRange) return;
+
+        const progress = (current - wrapperTop) / scrollRange;
+        const nearestStage = Math.round(progress * (STAGES.length - 1));
+        const targetY = wrapperTop + (nearestStage / (STAGES.length - 1)) * scrollRange;
+        if (Math.abs(current - targetY) > 1) {
+          window.scrollTo({ top: targetY, behavior: "smooth" });
+        }
+      }, SNAP_IDLE_DELAY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(idleTimer);
+    };
+  }, []);
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
