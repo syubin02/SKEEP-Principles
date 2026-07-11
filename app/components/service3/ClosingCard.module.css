@@ -9,17 +9,16 @@
   aspect-ratio: 1600 / 900;
   border-radius: 32px;
   overflow: hidden;
-  background: #e7eaf0;
+  background: #000000;
 }
 
 .textBlock {
   position: absolute;
-  right: clamp(24px, 6vw, 137px);
-  top: clamp(24px, 6vw, 116px);
+  left: clamp(24px, 5vw, 83px);
+  top: clamp(24px, 5vw, 90px);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  text-align: right;
   max-width: 560px;
 }
 
@@ -28,6 +27,7 @@
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.24;
+  color: #ffffff;
 }
 
 .body {
@@ -35,7 +35,7 @@
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 @media (max-width: 640px) {
@@ -46,7 +46,6 @@
 
   .textBlock {
     position: static;
-    text-align: left;
     max-width: none;
   }
 }
