@@ -48,11 +48,14 @@ function IntentVisual() {
 
 function BeyondVisual() {
   return (
-    <>
-      <span className={`${styles.rect} ${styles.rectA}`} />
-      <span className={`${styles.rect} ${styles.rectB}`} />
-      <span className={`${styles.rect} ${styles.rectC}`} />
-    </>
+    <video
+      className={styles.beyondVideo}
+      src={`${BASE_PATH}/service3/beyond-bg.mp4`}
+      autoPlay
+      muted
+      loop
+      playsInline
+    />
   );
 }
 
