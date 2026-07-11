@@ -56,6 +56,7 @@
 .visualLayer {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .watermark {
@@ -66,6 +67,33 @@
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #cdd0d6;
+  text-transform: capitalize;
+}
+
+.invertHover {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.invertOverlay {
+  position: absolute;
+  inset: 0;
+  background: #14171c;
+  opacity: 0;
+  clip-path: circle(0px at 50% 50%);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.watermarkInvert {
+  position: absolute;
+  left: 8%;
+  top: 22%;
+  font-size: clamp(48px, 6.2vw, 96px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #e7eaf0;
   text-transform: capitalize;
 }
 
