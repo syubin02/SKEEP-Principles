@@ -1,10 +1,13 @@
 import { Reveal } from "../ui/Reveal";
 import styles from "./ClosingCard.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export function ClosingCard() {
   return (
     <section className={styles.section}>
       <Reveal className={styles.box}>
+        <img className={styles.bgImage} src={`${BASE_PATH}/service3/closing-bg.png`} alt="" />
         <div className={styles.textBlock}>
           <h2 className={styles.heading}>
             쓰면 쓸수록
