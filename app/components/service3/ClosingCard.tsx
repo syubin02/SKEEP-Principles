@@ -6,7 +6,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export function ClosingCard() {
   return (
     <section className={styles.section}>
-      <Reveal className={styles.box}>
+      <Reveal className={styles.reveal}>
         <video
           className={styles.bgVideo}
           src={`${BASE_PATH}/service3/closing-bg.mp4`}

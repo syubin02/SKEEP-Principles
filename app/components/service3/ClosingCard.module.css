@@ -1,15 +1,13 @@
 .section {
-  background: var(--color-bg);
-  padding: clamp(56px, 8vw, 84px) var(--edge-padding);
-}
-
-.box {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1600 / 900;
-  border-radius: 32px;
+  min-height: 100vh;
   overflow: hidden;
   background: #000000;
+}
+
+.reveal {
+  position: absolute;
+  inset: 0;
 }
 
 .bgVideo {
@@ -45,16 +43,4 @@
   letter-spacing: -0.03em;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.75);
-}
-
-@media (max-width: 640px) {
-  .box {
-    aspect-ratio: auto;
-    padding: 32px 24px;
-  }
-
-  .textBlock {
-    position: static;
-    max-width: none;
-  }
 }
