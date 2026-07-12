@@ -35,9 +35,10 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 507px));
   gap: clamp(16px, 2vw, 40px);
   width: 100%;
+  justify-content: center;
 }
 
 .card {
@@ -90,6 +91,6 @@
 
 @media (max-width: 720px) {
   .cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 507px);
   }
 }
