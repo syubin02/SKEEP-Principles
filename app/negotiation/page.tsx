@@ -7,6 +7,8 @@ import { NegotiationDiagram } from "../components/negotiation/NegotiationDiagram
 import { NegotiationPillars } from "../components/negotiation/NegotiationPillars";
 import { ProtectionPrinciples } from "../components/negotiation/ProtectionPrinciples";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "SKEEP | Negotiation",
   description: "충돌이 생긴 순간부터, 합의에 이를 때까지.",
@@ -15,7 +17,10 @@ export const metadata: Metadata = {
 export default function NegotiationPage() {
   return (
     <main>
-      <StatementBlock heading={["당신이 원하는 그대로", "가장 자연스럽게"]} background="#e7eaf0" />
+      <StatementBlock
+        heading={["당신이 원하는 그대로", "가장 자연스럽게"]}
+        video={`${BASE_PATH}/negotiation/statement-bg.mp4`}
+      />
       <EvaluationCriteria />
       <EnvironmentLayers />
       <NegotiationPillars />
