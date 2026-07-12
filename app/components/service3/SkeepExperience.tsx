@@ -187,10 +187,10 @@ export function SkeepExperience() {
                 <motion.div
                   key={s.key}
                   className={styles.visualLayer}
-                  initial={{ y: 48 }}
-                  animate={{ y: 0 }}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, transition: { duration: 0 } }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <Visual />
                 </motion.div>
