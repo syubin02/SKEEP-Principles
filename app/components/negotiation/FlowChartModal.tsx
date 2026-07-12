@@ -2,8 +2,9 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
-import { NegotiationFlowChart } from "./NegotiationFlowChart";
 import styles from "./FlowChartModal.module.css";
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function CloseIcon() {
   return (
@@ -62,7 +63,12 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
               </button>
             </header>
             <div className={styles.scrollArea}>
-              <NegotiationFlowChart />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className={styles.flowImage}
+                src={`${BASE_PATH}/negotiation/flow-chart.png`}
+                alt="협상 프로세스 흐름도"
+              />
             </div>
           </motion.div>
         </motion.div>
