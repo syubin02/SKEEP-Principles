@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, type Variants } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./SkeepExperience.module.css";
 
@@ -106,9 +106,22 @@ const VISUALS = {
   seamless: SeamlessVisual,
 };
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+const visualVariants: Variants = {
+  enter: (direction: number) => ({ y: direction > 0 ? "100%" : 0 }),
+  center: { y: 0, transition: { duration: 0.6, ease: EASE } },
+  exit: (direction: number) =>
+    direction > 0
+      ? { opacity: 0.9999, transition: { duration: 0.6 } }
+      : { y: "100%", transition: { duration: 0.6, ease: EASE } },
+};
+
 export function SkeepExperience() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const prevIndexRef = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -117,7 +130,12 @@ export function SkeepExperience() {
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     const progress = clampedProgress(0, 1, value);
-    setActiveIndex(Math.round(progress * (STAGES.length - 1)));
+    const next = Math.round(progress * (STAGES.length - 1));
+    if (next !== prevIndexRef.current) {
+      setDirection(next > prevIndexRef.current ? 1 : -1);
+      prevIndexRef.current = next;
+    }
+    setActiveIndex(next);
   });
 
   // Once the scroll comes to rest while a stage is only partway crossfaded,
@@ -179,7 +197,7 @@ export function SkeepExperience() {
           </div>
         </div>
         <div className={styles.box}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} custom={direction}>
             {STAGES.map((s, i) => {
               if (i !== activeIndex) return null;
               const Visual = VISUALS[s.key];
@@ -188,9 +206,11 @@ export function SkeepExperience() {
                   key={s.key}
                   className={styles.visualLayer}
                   style={{ zIndex: i }}
-                  initial={{ y: "100%" }}
-                  animate={{ y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
-                  exit={{ opacity: 0.9999, transition: { duration: 0.6 } }}
+                  custom={direction}
+                  variants={visualVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                 >
                   <Visual />
                 </motion.div>
