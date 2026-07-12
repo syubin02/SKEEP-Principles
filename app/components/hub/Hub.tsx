@@ -39,7 +39,7 @@ const SLIDES: Slide[] = [
   },
   {
     href: "/service3",
-    thumbnail: { kind: "color", color: "#e7eaf0", heading: ["당신다운 경험의 시작"] },
+    thumbnail: { kind: "video", src: `${BASE_PATH}/service3/statement-bg.mp4`, heading: ["당신다운 경험의 시작"] },
   },
   {
     href: "/negotiation",
@@ -168,15 +168,25 @@ export function Hub() {
   // Dragging directly along the pagination dots scrubs through slides live,
   // following the finger position instead of advancing one at a time —
   // matching the Vision Pro site's draggable image-scrubber pattern.
-  const paginationRef = useRef<HTMLDivElement>(null);
+  // Snaps to whichever dot's own center is nearest the pointer (rather than
+  // a naive proportion of the bar's width) so a tap always lands on the dot
+  // actually under the finger, regardless of the container's padding/gaps.
+  const dotRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [isScrubbing, setIsScrubbing] = useState(false);
 
   function indexFromClientX(clientX: number) {
-    const el = paginationRef.current;
-    if (!el) return active;
-    const rect = el.getBoundingClientRect();
-    const ratio = rect.width === 0 ? 0 : (clientX - rect.left) / rect.width;
-    return Math.round(Math.min(Math.max(ratio, 0), 1) * (total - 1));
+    let closest = active;
+    let closestDist = Infinity;
+    dotRefs.current.forEach((dot, i) => {
+      if (!dot) return;
+      const rect = dot.getBoundingClientRect();
+      const dist = Math.abs(clientX - (rect.left + rect.width / 2));
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = i;
+      }
+    });
+    return closest;
   }
 
   function handleScrubMove(clientX: number) {
@@ -318,7 +328,6 @@ export function Hub() {
       </motion.div>
 
       <div
-        ref={paginationRef}
         className={styles.pagination}
         onPointerDown={handleScrubStart}
         onPointerMove={handleScrubPointerMove}
@@ -328,6 +337,9 @@ export function Hub() {
         {SLIDES.map((_, i) => (
           <button
             key={i}
+            ref={(el) => {
+              dotRefs.current[i] = el;
+            }}
             type="button"
             className={`${styles.dot} ${i === active ? styles.dotActive : ""}`}
             onClick={() => goTo(i)}
