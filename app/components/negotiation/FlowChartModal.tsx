@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValue } from "framer-motion";
-import { useEffect, useRef, useState, type WheelEvent } from "react";
+import { useEffect, useRef, useState, type TouchEvent, type WheelEvent } from "react";
 import styles from "./FlowChartModal.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -111,6 +111,34 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
     applyZoom(zoom > MIN_ZOOM ? MIN_ZOOM : 2);
   }
 
+  // Single-finger panning already works through the image's own `drag` prop
+  // (framer-motion tracks pointer events, touch included). Two-finger pinch
+  // isn't a pointer gesture though, so it's tracked by hand here: remember
+  // the finger spread and zoom level when the second finger lands, then
+  // scale zoom by how much that spread has changed on each move.
+  const pinchRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
+
+  function getTouchDistance(touches: TouchEvent<HTMLDivElement>["touches"]) {
+    const [t1, t2] = [touches[0], touches[1]];
+    return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+  }
+
+  function handleTouchStart(e: TouchEvent<HTMLDivElement>) {
+    if (e.touches.length === 2) {
+      pinchRef.current = { startDistance: getTouchDistance(e.touches), startZoom: zoom };
+    }
+  }
+
+  function handleTouchMove(e: TouchEvent<HTMLDivElement>) {
+    if (e.touches.length !== 2 || !pinchRef.current) return;
+    const distance = getTouchDistance(e.touches);
+    applyZoom((pinchRef.current.startZoom * distance) / pinchRef.current.startDistance);
+  }
+
+  function handleTouchEnd(e: TouchEvent<HTMLDivElement>) {
+    if (e.touches.length < 2) pinchRef.current = null;
+  }
+
   // The image is scaled via a `scale` transform around its own center, so at
   // zoom `z` it overhangs the viewport by (size * z - size) / 2 on each side.
   // Framer's ref-based dragConstraints doesn't factor that transform in, so
@@ -174,6 +202,10 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
               className={styles.viewport}
               onWheel={handleWheel}
               onDoubleClick={handleDoubleClick}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchEnd}
             >
               <motion.img
                 className={styles.flowImage}
