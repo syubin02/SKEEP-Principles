@@ -70,6 +70,7 @@
   letter-spacing: -0.03em;
   text-transform: uppercase;
   color: #222222;
+  margin-top: -5px;
 }
 
 .cardBody {
