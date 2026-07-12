@@ -25,11 +25,7 @@ export function GrowthCycle() {
   return (
     <section className={styles.section}>
       <Reveal className={styles.header}>
-        <h2 className={styles.heading}>
-          설명하지 않아도
-          <br />
-          알아서 척척.
-        </h2>
+        <h2 className={styles.heading}>설명하지 않아도 알아서 척척.</h2>
         <p className={styles.body}>
           사용자와 SKEEP이 함께한 시간만큼 서로가 익숙해집니다.
           <br />
