@@ -73,6 +73,17 @@
   margin-bottom: 12px;
 }
 
+.mainRowWrap {
+  position: relative;
+}
+
+.rejoinSvg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
 .mainRow {
   display: flex;
   align-items: flex-start;
