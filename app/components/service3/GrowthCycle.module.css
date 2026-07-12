@@ -36,12 +36,13 @@
 .cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 450px));
-  gap: clamp(16px, 2vw, 40px);
+  gap: 40px;
   width: 100%;
   justify-content: center;
 }
 
 .card {
+  height: 591px;
   background: var(--color-bg);
   border-radius: 32px;
   overflow: hidden;
@@ -52,12 +53,15 @@
 .visual {
   position: relative;
   width: 100%;
-  aspect-ratio: 900 / 711;
+  flex-shrink: 0;
+  aspect-ratio: 450 / 355.26;
   overflow: hidden;
   background: #f2f4f7;
 }
 
 .cardText {
+  height: 240px;
+  flex-shrink: 0;
   padding: clamp(20px, 2.4vw, 40px);
   display: flex;
   flex-direction: column;
@@ -92,5 +96,13 @@
 @media (max-width: 720px) {
   .cards {
     grid-template-columns: minmax(0, 450px);
+  }
+
+  .card {
+    height: auto;
+  }
+
+  .cardText {
+    height: auto;
   }
 }
