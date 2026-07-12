@@ -1,6 +1,7 @@
 import { Reveal } from "../ui/Reveal";
-import { CursorTrail } from "./CursorTrail";
 import styles from "./TodayStandard.module.css";
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function TodayStandard() {
   return (
@@ -18,7 +19,14 @@ export function TodayStandard() {
         </p>
       </Reveal>
       <Reveal delay={0.1} className={styles.box}>
-        <CursorTrail />
+        <video
+          className={styles.video}
+          src={`${BASE_PATH}/service3/today-standard-bg.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
       </Reveal>
     </section>
   );
