@@ -77,58 +77,12 @@
   color: #4b5869;
 }
 
-/* Learning: staggered horizontal bars, like lines of code */
-.learningVisual {
+.visualImage {
   position: absolute;
   inset: 0;
-  background: #ff3385;
-  display: flex;
-  flex-direction: column;
-}
-
-.barRow {
-  position: relative;
-  flex: 1;
-}
-
-.bar {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: #ff86b6;
-}
-
-/* Syncing: color wedges fanning out from the left edge */
-.syncingVisual {
-  position: absolute;
-  inset: 0;
-  background: conic-gradient(
-    from 0deg at 0% 50%,
-    #2fa968 0deg 56deg,
-    #ff6a3d 56deg 62deg,
-    #ff86b6 62deg 78deg,
-    #7ad9ab 78deg 102deg,
-    #ff86b6 102deg 118deg,
-    #ff6a3d 118deg 124deg,
-    #2fa968 124deg 180deg
-  );
-}
-
-/* Refining: equalizer bars of varying height */
-.refiningVisual {
-  position: absolute;
-  inset: 0;
-  background: #02a3fe;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2%;
-  padding: 0 4%;
-}
-
-.eqBar {
-  flex: 1;
-  border-radius: 2px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 @media (max-width: 720px) {
