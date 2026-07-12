@@ -1,7 +1,7 @@
 "use client";
 
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./SkeepExperience.module.css";
 
 const SNAP_IDLE_DELAY = 140;
@@ -59,16 +59,44 @@ function BeyondVisual() {
   );
 }
 
+// The source video is landscape but designed to play rotated 90deg inside
+// this landscape box. Swapping the un-rotated element's width/height to the
+// box's height/width means the rotation lands it back at the box's own
+// footprint, so it fills (and is clipped by) the box instead of leaving
+// letterboxing or spilling outside it.
 function SeamlessVisual() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    const video = videoRef.current;
+    if (!wrap || !video) return;
+
+    const applySize = () => {
+      const { offsetWidth: width, offsetHeight: height } = wrap;
+      video.style.width = `${height}px`;
+      video.style.height = `${width}px`;
+    };
+
+    applySize();
+    const observer = new ResizeObserver(applySize);
+    observer.observe(wrap);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <video
-      className={styles.seamlessVideo}
-      src={`${BASE_PATH}/service3/seamless-bg.mp4`}
-      autoPlay
-      muted
-      loop
-      playsInline
-    />
+    <div ref={wrapRef} className={styles.seamlessWrap}>
+      <video
+        ref={videoRef}
+        className={styles.seamlessVideo}
+        src={`${BASE_PATH}/service3/seamless-bg.mp4`}
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+    </div>
   );
 }
 
