@@ -1,7 +1,7 @@
 .section {
   position: relative;
   background: var(--color-bg);
-  padding: clamp(56px, 10vw, 119px) var(--edge-padding);
+  padding: clamp(90px, 13vw, 150px) var(--edge-padding) clamp(56px, 10vw, 119px);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
