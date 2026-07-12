@@ -43,7 +43,11 @@ const SLIDES: Slide[] = [
   },
   {
     href: "/negotiation",
-    thumbnail: { kind: "color", color: "#e7eaf0", heading: ["당신이 원하는 그대로", "가장 자연스럽게"] },
+    thumbnail: {
+      kind: "video",
+      src: `${BASE_PATH}/negotiation/statement-bg.mp4`,
+      heading: ["당신이 원하는 그대로", "가장 자연스럽게"],
+    },
   },
   {},
   {},
