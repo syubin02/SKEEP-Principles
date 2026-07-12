@@ -61,4 +61,13 @@
 .scrollArea {
   overflow: auto;
   flex: 1;
+  padding: 24px;
+}
+
+.flowImage {
+  display: block;
+  width: 100%;
+  min-width: 1000px;
+  height: auto;
+  border-radius: 12px;
 }
