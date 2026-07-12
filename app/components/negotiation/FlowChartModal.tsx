@@ -1,10 +1,18 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+import { AnimatePresence, motion, useMotionValue } from "framer-motion";
+import { useEffect, useRef, useState, type WheelEvent } from "react";
 import styles from "./FlowChartModal.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.4;
+const WHEEL_ZOOM_SENSITIVITY = 0.0015;
+
+function clampZoom(z: number) {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
+}
 
 function CloseIcon() {
   return (
@@ -20,12 +28,55 @@ function CloseIcon() {
   );
 }
 
+function ZoomIcon({ mode }: { mode: "in" | "out" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={styles.closeIcon} aria-hidden="true">
+      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M21 21l-4.3-4.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M8 11h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      {mode === "in" && <path d="M11 8v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />}
+    </svg>
+  );
+}
+
 export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [zoom, setZoom] = useState(MIN_ZOOM);
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  useEffect(() => {
+    // The viewport <div> only exists in the DOM while the modal is open, so
+    // this must re-attach on every open rather than just on mount.
+    if (!open) return;
+    const el = viewportRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      setViewportSize({ width, height });
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [open]);
+
+  function resetZoom() {
+    setZoom(MIN_ZOOM);
+    x.set(0);
+    y.set(0);
+  }
+
+  function handleClose() {
+    resetZoom();
+    onClose();
+  }
+
   useEffect(() => {
     if (!open) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     document.addEventListener("keydown", onKeyDown);
     const prevOverflow = document.body.style.overflow;
@@ -35,7 +86,38 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [open, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  function applyZoom(next: number) {
+    const clamped = clampZoom(next);
+    setZoom(clamped);
+    // Re-centering on every zoom step keeps the image inside the viewport
+    // without having to re-clamp x/y against the new bounds mid-drag.
+    x.set(0);
+    y.set(0);
+  }
+
+  function handleWheel(e: WheelEvent<HTMLDivElement>) {
+    e.preventDefault();
+    applyZoom(zoom - e.deltaY * WHEEL_ZOOM_SENSITIVITY);
+  }
+
+  function handleDoubleClick() {
+    applyZoom(zoom > MIN_ZOOM ? MIN_ZOOM : 2);
+  }
+
+  // The image is scaled via a `scale` transform around its own center, so at
+  // zoom `z` it overhangs the viewport by (size * z - size) / 2 on each side.
+  // Framer's ref-based dragConstraints doesn't factor that transform in, so
+  // the pannable range is computed by hand from the viewport's own box.
+  function getDragConstraints() {
+    if (zoom <= MIN_ZOOM) return { left: 0, right: 0, top: 0, bottom: 0 };
+    const { width, height } = viewportSize;
+    const maxX = (width * zoom - width) / 2;
+    const maxY = (height * zoom - height) / 2;
+    return { left: -maxX, right: maxX, top: -maxY, bottom: maxY };
+  }
 
   return (
     <AnimatePresence>
@@ -46,7 +128,7 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          onClick={onClose}
+          onClick={handleClose}
         >
           <motion.div
             className={styles.panel}
@@ -58,16 +140,47 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
           >
             <header className={styles.header}>
               <p className={styles.title}>협상 프로세스 흐름</p>
-              <button type="button" className={styles.closeButton} onClick={onClose} aria-label="닫기">
-                <CloseIcon />
-              </button>
+              <div className={styles.headerControls}>
+                <button
+                  type="button"
+                  className={styles.zoomButton}
+                  onClick={() => applyZoom(zoom - ZOOM_STEP)}
+                  disabled={zoom <= MIN_ZOOM}
+                  aria-label="축소"
+                >
+                  <ZoomIcon mode="out" />
+                </button>
+                <span className={styles.zoomLevel}>{Math.round(zoom * 100)}%</span>
+                <button
+                  type="button"
+                  className={styles.zoomButton}
+                  onClick={() => applyZoom(zoom + ZOOM_STEP)}
+                  disabled={zoom >= MAX_ZOOM}
+                  aria-label="확대"
+                >
+                  <ZoomIcon mode="in" />
+                </button>
+                <button type="button" className={styles.closeButton} onClick={handleClose} aria-label="닫기">
+                  <CloseIcon />
+                </button>
+              </div>
             </header>
-            <div className={styles.scrollArea}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div
+              ref={viewportRef}
+              className={styles.viewport}
+              onWheel={handleWheel}
+              onDoubleClick={handleDoubleClick}
+            >
+              <motion.img
                 className={styles.flowImage}
                 src={`${BASE_PATH}/negotiation/flow-chart.png`}
                 alt="협상 프로세스 흐름도"
+                style={{ x, y, scale: zoom, cursor: zoom > MIN_ZOOM ? "grab" : "default" }}
+                drag={zoom > MIN_ZOOM}
+                dragConstraints={getDragConstraints()}
+                dragElastic={0.05}
+                whileDrag={{ cursor: "grabbing" }}
+                draggable={false}
               />
             </div>
           </motion.div>
