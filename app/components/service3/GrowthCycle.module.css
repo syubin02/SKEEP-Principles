@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  background: linear-gradient(180deg, rgba(231, 234, 240, 0) 0%, #e7eaf0 100%);
+  background: #f4f8fc;
   padding: clamp(90px, 13vw, 150px) var(--edge-padding) clamp(72px, 8vw, 108px);
   display: flex;
   flex-direction: column;

@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  background: #f4f8fc;
+  background: var(--color-bg);
   padding: clamp(110px, 15vw, 180px) var(--edge-padding) clamp(56px, 10vw, 119px);
   display: flex;
   justify-content: space-between;
