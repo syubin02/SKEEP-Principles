@@ -1,6 +1,6 @@
 "use client";
 
-import { useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./SkeepExperience.module.css";
 
@@ -108,7 +108,7 @@ const VISUALS = {
 
 export function SkeepExperience() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [stage, setStage] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -116,7 +116,8 @@ export function SkeepExperience() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    setStage(clampedProgress(0, 1, value) * (STAGES.length - 1));
+    const progress = clampedProgress(0, 1, value);
+    setActiveIndex(Math.round(progress * (STAGES.length - 1)));
   });
 
   // Once the scroll comes to rest while a stage is only partway crossfaded,
@@ -158,38 +159,44 @@ export function SkeepExperience() {
         <div className={styles.textBlock}>
           <p className={styles.eyebrow}>Skeep Experience</p>
           <h2 className={styles.heading}>
-            {LINES.map((line, i) => {
-              const weight = Math.max(0, 1 - Math.abs(stage - i));
-              return (
-                <span key={line} style={{ color: `rgba(14, 24, 37, ${0.2 + 0.8 * weight})` }}>
-                  {line}
-                </span>
-              );
-            })}
+            {LINES.map((line, i) => (
+              <span
+                key={line}
+                style={{ color: i === activeIndex ? "rgba(14, 24, 37, 1)" : "rgba(14, 24, 37, 0.2)" }}
+              >
+                {line}
+              </span>
+            ))}
           </h2>
           <div className={styles.captionStack}>
-            {STAGES.map((s, i) => {
-              const weight = Math.max(0, 1 - Math.abs(stage - i));
-              return (
-                <div key={s.key} className={styles.caption} style={{ opacity: weight }}>
-                  {s.caption.map((line) => (
-                    <p key={line}>{line}</p>
-                  ))}
-                </div>
-              );
-            })}
+            {STAGES.map((s, i) => (
+              <div key={s.key} className={styles.caption} style={{ opacity: i === activeIndex ? 1 : 0 }}>
+                {s.caption.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
         <div className={styles.box}>
-          {STAGES.map((s, i) => {
-            const weight = Math.max(0, 1 - Math.abs(stage - i));
-            const Visual = VISUALS[s.key];
-            return (
-              <div key={s.key} className={styles.visualLayer} style={{ opacity: weight }}>
-                <Visual />
-              </div>
-            );
-          })}
+          <AnimatePresence initial={false}>
+            {STAGES.map((s, i) => {
+              if (i !== activeIndex) return null;
+              const Visual = VISUALS[s.key];
+              return (
+                <motion.div
+                  key={s.key}
+                  className={styles.visualLayer}
+                  initial={{ y: 48 }}
+                  animate={{ y: 0 }}
+                  exit={{ opacity: 0, transition: { duration: 0 } }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <Visual />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
       </section>
     </div>
