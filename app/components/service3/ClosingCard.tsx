@@ -7,7 +7,14 @@ export function ClosingCard() {
   return (
     <section className={styles.section}>
       <Reveal className={styles.box}>
-        <img className={styles.bgImage} src={`${BASE_PATH}/service3/closing-bg.png`} alt="" />
+        <video
+          className={styles.bgVideo}
+          src={`${BASE_PATH}/service3/closing-bg.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
         <div className={styles.textBlock}>
           <h2 className={styles.heading}>
             쓰면 쓸수록
