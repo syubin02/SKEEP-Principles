@@ -1,7 +1,7 @@
 .section {
   position: relative;
   background: #0e1825;
-  padding: clamp(90px, 13vw, 150px) var(--edge-padding) clamp(72px, 8vw, 108px);
+  padding: clamp(90px, 13vw, 150px) var(--edge-padding) clamp(80px, 10vw, 132px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,7 +64,7 @@
 }
 
 .cardTitle {
-  font-size: clamp(20px, 2.6vw, 36px);
+  font-size: clamp(22px, 2.9vw, 40px);
   font-weight: 600;
   letter-spacing: -0.03em;
   text-transform: uppercase;
