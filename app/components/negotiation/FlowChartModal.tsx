@@ -63,8 +63,11 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
 
   function resetZoom() {
     setZoom(MIN_ZOOM);
-    x.set(0);
-    y.set(0);
+    // .jump() (not .set()) so this also cancels any drag-release momentum
+    // still animating x/y — otherwise that animation can overwrite the
+    // reset a frame later and the pan position survives close/reopen.
+    x.jump(0);
+    y.jump(0);
   }
 
   function handleClose() {
@@ -94,8 +97,9 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
     setZoom(clamped);
     // Re-centering on every zoom step keeps the image inside the viewport
     // without having to re-clamp x/y against the new bounds mid-drag.
-    x.set(0);
-    y.set(0);
+    // .jump() also cancels any drag-release momentum still animating x/y.
+    x.jump(0);
+    y.jump(0);
   }
 
   function handleWheel(e: WheelEvent<HTMLDivElement>) {
