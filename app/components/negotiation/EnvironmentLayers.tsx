@@ -35,8 +35,7 @@ export function EnvironmentLayers() {
       <Reveal className={styles.textBlock}>
         <h2 className={styles.heading}>
           주력환경
-          <br />
-          Passive Layer
+          <br />: Passive Layer
         </h2>
         <p className={styles.body}>
           사용자가 현재 상호작용 중인 환경입니다.
