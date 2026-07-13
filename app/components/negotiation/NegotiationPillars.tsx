@@ -4,6 +4,8 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useRef, useState } from "react";
 import styles from "./NegotiationPillars.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const PILLARS = [
   {
     key: "skip",
@@ -28,6 +30,7 @@ const PILLARS = [
   {
     key: "keep",
     color: "#d4d8e0",
+    video: `${BASE_PATH}/negotiation/keep-flow.mp4`,
     title: ["모두의 흐름은", "KEEP"],
     body: [
       "SKEEP은 서로의 조건을 조율해,",
@@ -79,18 +82,33 @@ export function NegotiationPillars() {
             const bodyWeight = windowWeight(stage, i, 0.44);
             return (
               <div key={pillar.key} className={styles.layer}>
-                <div
-                  className={styles.background}
-                  style={{ background: pillar.color, opacity: containerWeight }}
-                />
+                <div className={styles.background} style={{ background: pillar.color, opacity: containerWeight }}>
+                  {"video" in pillar && (
+                    // eslint-disable-next-line jsx-a11y/media-has-caption
+                    <video
+                      className={styles.backgroundVideo}
+                      src={pillar.video}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  )}
+                </div>
                 <div className={styles.content}>
                   <div className={styles.textBlock}>
-                    <h2 className={styles.heading} style={riseStyle(titleWeight)}>
+                    <h2
+                      className={"video" in pillar ? `${styles.heading} ${styles.headingOnVideo}` : styles.heading}
+                      style={riseStyle(titleWeight)}
+                    >
                       {pillar.title.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
                     </h2>
-                    <p className={styles.body} style={riseStyle(bodyWeight)}>
+                    <p
+                      className={"video" in pillar ? `${styles.body} ${styles.bodyOnVideo}` : styles.body}
+                      style={riseStyle(bodyWeight)}
+                    >
                       {pillar.body.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
