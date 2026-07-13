@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { StatementBlock } from "../components/service2/StatementBlock";
+import { AnchorEnvironment } from "../components/negotiation/AnchorEnvironment";
 import { EnvironmentLayers } from "../components/negotiation/EnvironmentLayers";
 import { EvaluationCriteria } from "../components/negotiation/EvaluationCriteria";
 import { MoreStory } from "../components/negotiation/MoreStory";
@@ -23,6 +24,7 @@ export default function NegotiationPage() {
       />
       <EvaluationCriteria />
       <EnvironmentLayers />
+      <AnchorEnvironment />
       <NegotiationPillars />
       <MoreStory />
       <NegotiationDiagram />
