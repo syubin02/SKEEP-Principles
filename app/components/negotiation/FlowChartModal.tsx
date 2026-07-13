@@ -7,6 +7,7 @@ import styles from "./FlowChartModal.module.css";
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
+const DEFAULT_ZOOM = 2;
 const ZOOM_STEP = 0.4;
 const WHEEL_ZOOM_SENSITIVITY = 0.0015;
 
@@ -40,7 +41,7 @@ function ZoomIcon({ mode }: { mode: "in" | "out" }) {
 }
 
 export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [zoom, setZoom] = useState(MIN_ZOOM);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const viewportRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -62,7 +63,7 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
   }, [open]);
 
   function resetZoom() {
-    setZoom(MIN_ZOOM);
+    setZoom(DEFAULT_ZOOM);
     // .jump() (not .set()) so this also cancels any drag-release momentum
     // still animating x/y — otherwise that animation can overwrite the
     // reset a frame later and the pan position survives close/reopen.
@@ -108,7 +109,7 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
   }
 
   function handleDoubleClick() {
-    applyZoom(zoom > MIN_ZOOM ? MIN_ZOOM : 2);
+    applyZoom(zoom > MIN_ZOOM ? MIN_ZOOM : DEFAULT_ZOOM);
   }
 
   // Single-finger panning already works through the image's own `drag` prop
@@ -171,7 +172,7 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
             onClick={(e) => e.stopPropagation()}
           >
             <header className={styles.header}>
-              <p className={styles.title}>협상 프로세스 흐름</p>
+              <p className={styles.title}>협상 프로세스</p>
               <div className={styles.headerControls}>
                 <button
                   type="button"
