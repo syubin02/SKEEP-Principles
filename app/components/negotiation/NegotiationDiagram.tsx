@@ -8,6 +8,13 @@ import styles from "./NegotiationDiagram.module.css";
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const TICKER_DURATION = 900;
 
+// Easy-ease (cubic ease-in) applied to the tick delay's growth curve: it
+// stays fast for most of the run, then smoothly — not abruptly — decelerates
+// into the landing value, like an odometer easing to a stop.
+function easeInCubic(t: number) {
+  return t * t * t;
+}
+
 // Rapidly cycles random values before settling on the real one, like an
 // odometer/slot-machine reel — the tick interval grows over time so it
 // visibly decelerates into the landing value instead of stopping abruptly.
@@ -37,7 +44,7 @@ function StatTicker({
       }
       setDisplay(randomize());
       const progress = elapsed / TICKER_DURATION;
-      timeoutId = setTimeout(tick, 35 + progress * 140);
+      timeoutId = setTimeout(tick, 35 + easeInCubic(progress) * 140);
     }
     tick();
 
