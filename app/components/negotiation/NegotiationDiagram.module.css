@@ -64,24 +64,15 @@
   object-fit: cover;
 }
 
-/* Solid patches matching the stat panel's background, sized to fully cover
-   the static "90%" / "0" baked into the image so only the live ticker shows. */
-.statMaskCnp {
+/* Cycles between the CFP/Bid/Award rows, matching each row's exact Figma
+   box (left/width/height fixed, only `top` animates between them). */
+.stepHighlight {
   position: absolute;
-  left: 45.48cqw;
-  top: 10.43cqw;
-  width: 9.69cqw;
-  height: 6.13cqw;
-  background: #2b3542;
-}
-
-.statMaskDcop {
-  position: absolute;
-  left: 38.93cqw;
-  top: 13.4cqw;
-  width: 4.63cqw;
-  height: 6.94cqw;
-  background: #2b3542;
+  left: 66.19cqw;
+  width: 26.37cqw;
+  height: 8.47cqw;
+  border-radius: 0.875cqw;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .statTickerCnp {

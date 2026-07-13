@@ -1,12 +1,29 @@
 "use client";
 
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "../ui/Reveal";
 import styles from "./NegotiationDiagram.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const TICKER_DURATION = 900;
+const STEP_HOLD_DURATION = 1800;
+// Top offset (cqw, matching the Figma step-row coordinates) of each step row.
+const STEP_TOPS = ["7.96cqw", "16.39cqw", "24.82cqw"];
+
+// Cycles the "current step" index 0→1→2→0... while active, so the highlight
+// visits CFP/Bid/Award in turn instead of sitting on STEP 1 forever.
+function useStepCycle(active: boolean) {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => setStep((s) => (s + 1) % STEP_TOPS.length), STEP_HOLD_DURATION);
+    return () => clearInterval(id);
+  }, [active]);
+
+  return step;
+}
 
 // Easy-ease (cubic ease-in) applied to the tick delay's growth curve: it
 // stays fast for most of the run, then smoothly — not abruptly — decelerates
@@ -68,6 +85,7 @@ export function NegotiationDiagram() {
   const [active, setActive] = useState(0);
   const diagramRef = useRef<HTMLDivElement>(null);
   const inView = useInView(diagramRef, { amount: 0.5 });
+  const currentStep = useStepCycle(inView && active === 0);
 
   return (
     <section id="negotiation-diagram" className={styles.section}>
@@ -90,7 +108,11 @@ export function NegotiationDiagram() {
               <img className={styles.diagramImage} src={label.src} alt={label.alt} />
               {i === 0 && (
                 <>
-                  <span className={styles.statMaskCnp} />
+                  <motion.div
+                    className={styles.stepHighlight}
+                    animate={{ top: STEP_TOPS[currentStep] }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  />
                   <StatTicker
                     trigger={inView && active === 0}
                     finalText="90%"
@@ -100,15 +122,12 @@ export function NegotiationDiagram() {
                 </>
               )}
               {i === 1 && (
-                <>
-                  <span className={styles.statMaskDcop} />
-                  <StatTicker
-                    trigger={inView && active === 1}
-                    finalText="0"
-                    randomize={() => `${Math.floor(Math.random() * 10)}`}
-                    className={styles.statTickerDcop}
-                  />
-                </>
+                <StatTicker
+                  trigger={inView && active === 1}
+                  finalText="0"
+                  randomize={() => `${Math.floor(Math.random() * 10)}`}
+                  className={styles.statTickerDcop}
+                />
               )}
             </div>
           ))}
