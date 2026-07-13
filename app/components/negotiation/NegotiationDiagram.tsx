@@ -1,10 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Reveal } from "../ui/Reveal";
 import styles from "./NegotiationDiagram.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const TICKER_DURATION = 900;
+
+// Rapidly cycles random values before settling on the real one, like an
+// odometer/slot-machine reel — the tick interval grows over time so it
+// visibly decelerates into the landing value instead of stopping abruptly.
+function StatTicker({
+  trigger,
+  finalText,
+  randomize,
+  className,
+}: {
+  trigger: boolean;
+  finalText: string;
+  randomize: () => string;
+  className: string;
+}) {
+  const [display, setDisplay] = useState(finalText);
+
+  useEffect(() => {
+    if (!trigger) return;
+    const start = performance.now();
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    function tick() {
+      const elapsed = performance.now() - start;
+      if (elapsed >= TICKER_DURATION) {
+        setDisplay(finalText);
+        return;
+      }
+      setDisplay(randomize());
+      const progress = elapsed / TICKER_DURATION;
+      timeoutId = setTimeout(tick, 35 + progress * 140);
+    }
+    tick();
+
+    return () => clearTimeout(timeoutId);
+  }, [trigger, finalText, randomize]);
+
+  return <span className={className}>{display}</span>;
+}
 
 const LABELS = [
   { index: "01", name: "CNP", src: `${BASE_PATH}/negotiation/cnp.png`, alt: "CNP : Contract Net Protocol" },
@@ -18,6 +59,8 @@ const LABELS = [
 
 export function NegotiationDiagram() {
   const [active, setActive] = useState(0);
+  const diagramRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(diagramRef, { amount: 0.5 });
 
   return (
     <section id="negotiation-diagram" className={styles.section}>
@@ -33,11 +76,33 @@ export function NegotiationDiagram() {
         </p>
       </Reveal>
       <Reveal delay={0.1} className={styles.diagramWrap}>
-        <div className={styles.diagram}>
+        <div className={styles.diagram} ref={diagramRef}>
           {LABELS.map((label, i) => (
             <div key={label.name} className={styles.diagramLayer} style={{ opacity: active === i ? 1 : 0 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className={styles.diagramImage} src={label.src} alt={label.alt} />
+              {i === 0 && (
+                <>
+                  <span className={styles.statMaskCnp} />
+                  <StatTicker
+                    trigger={inView && active === 0}
+                    finalText="90%"
+                    randomize={() => `${Math.floor(Math.random() * 100)}%`}
+                    className={styles.statTickerCnp}
+                  />
+                </>
+              )}
+              {i === 1 && (
+                <>
+                  <span className={styles.statMaskDcop} />
+                  <StatTicker
+                    trigger={inView && active === 1}
+                    finalText="0"
+                    randomize={() => `${Math.floor(Math.random() * 10)}`}
+                    className={styles.statTickerDcop}
+                  />
+                </>
+              )}
             </div>
           ))}
         </div>
