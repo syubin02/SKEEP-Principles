@@ -16,8 +16,9 @@ export function AnchorEnvironment() {
           <br />
           환경에 SKEEP을 부여해 사용자의 규칙을 설정하고 관리할 수 있습니다.
           <br />
-          내가 만약 카페 사장님이라면, 공간을 SKEEP해두면 카페를 떠나도 나
-          대신 SKEEP이 필요한 일을 이어갑니다.
+          만약 당신이 카페 사장님이라면, 카페를 &apos;앵커 환경&apos;으로
+          지정해보세요. 당신이 없는 순간에도 SKEEP이 공간의 규칙을 세심하게
+          관리합니다. 당신은 온전히 당신의 시간에만 집중하세요.
         </p>
       </Reveal>
       <Reveal delay={0.1} className={styles.box}>
