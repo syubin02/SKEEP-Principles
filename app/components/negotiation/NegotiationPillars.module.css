@@ -20,7 +20,7 @@
   aspect-ratio: 1600 / 900;
   border-radius: 32px;
   overflow: hidden;
-  background: #e7eaf0;
+  background: var(--color-bg-soft);
   /* Locked aspect-ratio lets every offset below be expressed in cqw (a % of
      the box's own width) and land exactly on the Figma coordinates at any
      size, even for vertical offsets — see NegotiationDiagram for the same
@@ -31,19 +31,6 @@
 .layer {
   position: absolute;
   inset: 0;
-}
-
-.background {
-  position: absolute;
-  inset: 0;
-}
-
-.backgroundVideo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .content {
@@ -82,15 +69,6 @@
   white-space: nowrap;
 }
 
-.headingOnVideo,
-.bodyOnVideo {
-  color: #ffffff;
-}
-
-.bodyOnVideo {
-  color: rgba(255, 255, 255, 0.8);
-}
-
 @media (max-width: 720px) {
   .wrapper {
     height: auto;
@@ -115,14 +93,12 @@
     position: relative;
   }
 
-  .background {
+  .content {
     position: relative;
     aspect-ratio: 1600 / 900;
     border-radius: 32px;
-    opacity: 1 !important;
-  }
-
-  .content {
+    overflow: hidden;
+    background: var(--color-bg-soft);
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
