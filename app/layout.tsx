@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CursorProvider } from "./components/ui/Cursor";
 import { pretendard } from "./fonts/pretendard";
 import "./globals.css";
 
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={pretendard.variable}>
-      <body>{children}</body>
+      <body>
+        <CursorProvider>{children}</CursorProvider>
+      </body>
     </html>
   );
 }
