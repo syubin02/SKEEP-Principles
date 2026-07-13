@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCursorVariant } from "../ui/Cursor";
 import { Reveal } from "../ui/Reveal";
 import styles from "./EnvironmentLayers.module.css";
 
@@ -25,13 +26,18 @@ const CARDS = [
 
 export function EnvironmentLayers() {
   const [flipped, setFlipped] = useState(CARDS.map((c) => c.flipped));
+  const setCursorVariant = useCursorVariant();
 
   function toggle(i: number) {
     setFlipped((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
   }
 
   return (
-    <section className={styles.section}>
+    <section
+      className={styles.section}
+      onMouseEnter={() => setCursorVariant("flip")}
+      onMouseLeave={() => setCursorVariant("default")}
+    >
       <Reveal className={styles.textBlock}>
         <h2 className={styles.heading}>
           주력환경

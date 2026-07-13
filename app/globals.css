@@ -45,3 +45,11 @@ button {
   border: none;
   background: none;
 }
+
+@media (pointer: fine) {
+  *,
+  button,
+  a {
+    cursor: none;
+  }
+}
