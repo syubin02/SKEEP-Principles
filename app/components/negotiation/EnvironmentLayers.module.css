@@ -8,24 +8,39 @@
 
 .textBlock {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 720px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: clamp(24px, 4vw, 64px);
 }
 
 .heading {
+  flex: 0 0 auto;
   font-size: clamp(24px, 3.6vw, 54px);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.3;
+  white-space: nowrap;
 }
 
 .body {
+  flex: 1 1 0;
+  max-width: 640px;
   font-size: clamp(14px, 1.8vw, 24px);
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.5;
   color: var(--color-text-muted);
+}
+
+@media (max-width: 720px) {
+  .textBlock {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .heading {
+    white-space: normal;
+  }
 }
 
 .grid {
