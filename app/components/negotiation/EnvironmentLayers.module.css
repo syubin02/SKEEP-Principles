@@ -32,8 +32,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   width: 100%;
-  border-radius: 32px;
-  overflow: hidden;
 }
 
 .cardButton {
