@@ -46,6 +46,10 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
   const viewportRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  // Tracks whether the leftmost start position has been applied for the
+  // current open session, so a later window resize doesn't yank the pan
+  // back while the user is exploring the diagram.
+  const positionedRef = useRef(false);
 
   useEffect(() => {
     // The viewport <div> only exists in the DOM while the modal is open, so
@@ -62,12 +66,27 @@ export function FlowChartModal({ open, onClose }: { open: boolean; onClose: () =
     return () => observer.disconnect();
   }, [open]);
 
+  // Opens the diagram scrolled all the way to its leftmost edge (where the
+  // flow starts) instead of centered, since the chart reads left-to-right.
+  useEffect(() => {
+    if (!open) {
+      positionedRef.current = false;
+      return;
+    }
+    if (positionedRef.current || viewportSize.width === 0) return;
+    const maxX = (viewportSize.width * DEFAULT_ZOOM - viewportSize.width) / 2;
+    x.jump(maxX);
+    y.jump(0);
+    positionedRef.current = true;
+  }, [open, viewportSize, x, y]);
+
   function resetZoom() {
     setZoom(DEFAULT_ZOOM);
     // .jump() (not .set()) so this also cancels any drag-release momentum
     // still animating x/y — otherwise that animation can overwrite the
     // reset a frame later and the pan position survives close/reopen.
-    x.jump(0);
+    const maxX = (viewportSize.width * DEFAULT_ZOOM - viewportSize.width) / 2;
+    x.jump(maxX);
     y.jump(0);
   }
 
