@@ -105,10 +105,10 @@
   display: flex;
   align-items: center;
   gap: clamp(7px, 0.9vw, 14px);
-  background: #e7eaf0;
+  background: #0e1825;
   border-radius: 32px;
   padding: clamp(11px, 1.44vw, 18px);
-  width: min(468px, 100%);
+  width: min(422px, 100%);
 }
 
 .labelCard {
@@ -138,5 +138,10 @@
   font-size: clamp(14px, 1.53vw, 29px);
   font-weight: 600;
   letter-spacing: -0.03em;
+  color: #ffffff;
+  transition: color 0.25s ease;
+}
+
+.labelCardRaised .labelName {
   color: var(--color-text);
 }
