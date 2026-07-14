@@ -31,6 +31,7 @@
 .layer {
   position: absolute;
   inset: 0;
+  opacity: var(--pillar-opacity, 1);
 }
 
 .backgroundVideo {
@@ -108,6 +109,7 @@
 
   .layer {
     position: relative;
+    opacity: 1 !important;
   }
 
   .backgroundVideo {
