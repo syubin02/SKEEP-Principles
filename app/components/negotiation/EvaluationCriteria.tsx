@@ -42,11 +42,6 @@ export function EvaluationCriteria() {
           대신 목적을 이어가기 위해 필요한 시간과 자원, 대체 수단만 살펴
           서로의 조건을 조율하죠.
         </p>
-        <p className={styles.note}>
-          긴급도는 조정 여부에 따라 사용자의 목적 경험이 얼마나 빨리
-          실패하는가를 측정하는 기준입니다. 단, 환경 소유자의 환경 규제나
-          원칙에 따라 긴급도 평가 요건이 달라질 수 있습니다.
-        </p>
       </div>
       <div className={styles.visualColumn}>
         {CRITERIA.map((c, i) => (

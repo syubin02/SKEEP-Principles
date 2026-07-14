@@ -77,6 +77,15 @@ export function NegotiationPillars() {
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
+      {/* Invisible scroll-snap targets: the wrapper is 240vh for a 100vh
+          viewport, so its 140vh of scrollable range maps stage 0/1/2 to
+          scroll offsets 0/70vh/140vh — matching each pillar becoming fully
+          current. `scroll-snap-type: y proximity` (set globally) gently
+          pulls scroll to whichever of these is closest instead of leaving
+          the section feeling like it drifts freely between pillars. */}
+      <div className={styles.snapPoint} style={{ top: "0vh" }} />
+      <div className={styles.snapPoint} style={{ top: "70vh" }} />
+      <div className={styles.snapPoint} style={{ top: "140vh" }} />
       <section className={styles.section}>
         <div className={styles.box}>
           {PILLARS.map((pillar, i) => {
