@@ -34,6 +34,8 @@ const PILLARS = [
   },
   {
     key: "keep",
+    video: `${BASE_PATH}/negotiation/keep-flow.mp4`,
+    lightText: true,
     title: ["모두의 흐름은", "KEEP"],
     body: [
       "SKEEP은 서로의 조건을 조율해,",
