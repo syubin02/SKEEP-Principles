@@ -81,8 +81,8 @@ export function NegotiationPillars() {
         <div className={styles.box}>
           {PILLARS.map((pillar, i) => {
             const containerWeight = windowWeight(stage, i, 0, 0.35);
-            const titleWeight = windowWeight(stage, i, 0.22);
-            const bodyWeight = windowWeight(stage, i, 0.44);
+            const titleWeight = windowWeight(stage, i, 0.22, 0.35);
+            const bodyWeight = windowWeight(stage, i, 0.44, 0.35);
             const hasVideo = "video" in pillar;
             const lightText = "lightText" in pillar && pillar.lightText;
             return (
