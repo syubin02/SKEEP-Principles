@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./Hub.module.css";
 
 const DRAG_OFFSET_THRESHOLD = 80;
@@ -143,26 +143,28 @@ function DisplayIcon() {
   );
 }
 
+// Reads whichever slide was active when the user last left the hub (e.g.
+// clicked into a page and came back), instead of always starting over at
+// the first card. Read directly in useState's lazy initializer — not an
+// effect — so the restored index is there from this component's very first
+// commit. AnimatePresence only skips its enter/exit transition for children
+// present at that first commit; restoring a render (or two) later still
+// counts as a change and plays the slide transition, which read as an
+// unwanted snap/jerk on a page that had just loaded.
+function readStoredActive() {
+  if (typeof window === "undefined") return 0;
+  const stored = sessionStorage.getItem(ACTIVE_SLIDE_KEY);
+  if (stored === null) return 0;
+  const i = Number(stored);
+  return Number.isInteger(i) && i >= 0 && i < SLIDES.length ? i : 0;
+}
+
 export function Hub() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(readStoredActive);
   // +1 means the slide entering is coming from the right (swiped left, "next");
   // -1 means it's coming from the left ("prev"). Drives CardContent's slide direction.
   const [direction, setDirection] = useState(1);
   const total = SLIDES.length;
-
-  // Restores whichever slide was active when the user last left the hub
-  // (e.g. clicked into a page and came back), instead of always starting
-  // over at the first card. Read in a layout effect (not the initial state,
-  // and not a regular effect) so it applies before the browser paints —
-  // the server-rendered markup still matches the client on hydration, and
-  // there's no visible flash of slide 0 before jumping to the restored one.
-  useLayoutEffect(() => {
-    const stored = sessionStorage.getItem(ACTIVE_SLIDE_KEY);
-    if (stored === null) return;
-    const i = Number(stored);
-    if (Number.isInteger(i) && i >= 0 && i < total) setActive(i);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Persisted right at the point of each interaction (not reactively via a
   // useEffect keyed on `active`) — a separate write-effect would run once
