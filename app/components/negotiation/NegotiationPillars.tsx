@@ -10,6 +10,7 @@ const PILLARS = [
   {
     key: "skip",
     video: `${BASE_PATH}/negotiation/skip-flow.mp4`,
+    lightText: true,
     // Figma node 4401:723's text block (left: 1121.3px, top: 312px within
     // the 1600x900 frame), converted to cqw so it lands in the same spot.
     left: "70.081cqw",
@@ -23,6 +24,7 @@ const PILLARS = [
   },
   {
     key: "skeep",
+    video: `${BASE_PATH}/negotiation/skeep-flow.mp4`,
     title: ["경계를 존중하는", "SKEEP"],
     body: [
       "환경 운영 규칙과 물리적 한계,",
@@ -81,6 +83,7 @@ export function NegotiationPillars() {
             const titleWeight = windowWeight(stage, i, 0.22);
             const bodyWeight = windowWeight(stage, i, 0.44);
             const hasVideo = "video" in pillar;
+            const lightText = "lightText" in pillar && pillar.lightText;
             const textBlockStyle =
               "left" in pillar ? { left: pillar.left, top: pillar.top } : undefined;
             return (
@@ -99,7 +102,7 @@ export function NegotiationPillars() {
                 <div className={styles.content}>
                   <div className={styles.textBlock} style={textBlockStyle}>
                     <h2
-                      className={hasVideo ? `${styles.heading} ${styles.headingOnVideo}` : styles.heading}
+                      className={lightText ? `${styles.heading} ${styles.headingOnVideo}` : styles.heading}
                       style={riseStyle(titleWeight)}
                     >
                       {pillar.title.map((line) => (
@@ -107,7 +110,7 @@ export function NegotiationPillars() {
                       ))}
                     </h2>
                     <p
-                      className={hasVideo ? `${styles.body} ${styles.bodyOnVideo}` : styles.body}
+                      className={lightText ? `${styles.body} ${styles.bodyOnVideo}` : styles.body}
                       style={riseStyle(bodyWeight)}
                     >
                       {pillar.body.map((line) => (
