@@ -20,6 +20,13 @@ body {
   overflow-x: clip;
 }
 
+html {
+  /* "proximity" (not "mandatory") so this only gently pulls scroll toward a
+     snap point when already close to one — it never fights normal scrolling
+     through the rest of the page. */
+  scroll-snap-type: y proximity;
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);

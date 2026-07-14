@@ -4,6 +4,15 @@
   background: var(--color-bg);
 }
 
+.snapPoint {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 100vh;
+  scroll-snap-align: start;
+  pointer-events: none;
+}
+
 .section {
   height: 100vh;
   position: sticky;
@@ -92,6 +101,10 @@
 @media (max-width: 720px) {
   .wrapper {
     height: auto;
+  }
+
+  .snapPoint {
+    display: none;
   }
 
   .section {
