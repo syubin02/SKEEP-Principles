@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import styles from "./Hub.module.css";
 
 const DRAG_OFFSET_THRESHOLD = 80;
 const DRAG_VELOCITY_THRESHOLD = 400;
+const ACTIVE_SLIDE_KEY = "hub-active-slide";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -148,6 +149,31 @@ export function Hub() {
   // -1 means it's coming from the left ("prev"). Drives CardContent's slide direction.
   const [direction, setDirection] = useState(1);
   const total = SLIDES.length;
+
+  // Restores whichever slide was active when the user last left the hub
+  // (e.g. clicked into a page and came back), instead of always starting
+  // over at the first card. Read in a layout effect (not the initial state,
+  // and not a regular effect) so it applies before the browser paints —
+  // the server-rendered markup still matches the client on hydration, and
+  // there's no visible flash of slide 0 before jumping to the restored one.
+  useLayoutEffect(() => {
+    const stored = sessionStorage.getItem(ACTIVE_SLIDE_KEY);
+    if (stored === null) return;
+    const i = Number(stored);
+    if (Number.isInteger(i) && i >= 0 && i < total) setActive(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persisted right at the point of each interaction (not reactively via a
+  // useEffect keyed on `active`) — a separate write-effect would run once
+  // per render with whatever `active` its own closure captured, including
+  // the initial render's default of 0, and could race the restore above by
+  // overwriting the just-restored value back to 0 before it ever painted.
+  function setActiveAndPersist(next: number) {
+    setActive(next);
+    sessionStorage.setItem(ACTIVE_SLIDE_KEY, String(next));
+  }
+
   const prevIndex = mod(active - 1, total);
   const nextIndex = mod(active + 1, total);
   const current = SLIDES[active];
@@ -156,17 +182,17 @@ export function Hub() {
 
   function goNext() {
     setDirection(1);
-    setActive((a) => mod(a + 1, total));
+    setActiveAndPersist(mod(active + 1, total));
   }
 
   function goPrev() {
     setDirection(-1);
-    setActive((a) => mod(a - 1, total));
+    setActiveAndPersist(mod(active - 1, total));
   }
 
   function goTo(i: number) {
     setDirection(i >= active ? 1 : -1);
-    setActive(i);
+    setActiveAndPersist(i);
   }
 
   // Dragging directly along the pagination dots scrubs through slides live,
@@ -198,6 +224,7 @@ export function Hub() {
     setActive((a) => {
       if (i === a) return a;
       setDirection(i >= a ? 1 : -1);
+      sessionStorage.setItem(ACTIVE_SLIDE_KEY, String(i));
       return i;
     });
   }
