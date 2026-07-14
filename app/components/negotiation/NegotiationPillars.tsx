@@ -1,7 +1,7 @@
 "use client";
 
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import styles from "./NegotiationPillars.module.css";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -82,6 +82,7 @@ export function NegotiationPillars() {
       <section className={styles.section}>
         <div className={styles.box}>
           {PILLARS.map((pillar, i) => {
+            const containerWeight = windowWeight(stage, i, 0);
             const titleWeight = windowWeight(stage, i, 0.22);
             const bodyWeight = windowWeight(stage, i, 0.44);
             const hasVideo = "video" in pillar;
@@ -89,7 +90,11 @@ export function NegotiationPillars() {
             const textBlockStyle =
               "left" in pillar ? { left: pillar.left, top: pillar.top } : undefined;
             return (
-              <div key={pillar.key} className={styles.layer}>
+              <div
+                key={pillar.key}
+                className={styles.layer}
+                style={{ "--pillar-opacity": containerWeight } as CSSProperties}
+              >
                 {hasVideo && (
                   // eslint-disable-next-line jsx-a11y/media-has-caption
                   <video
