@@ -4,9 +4,16 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useRef, useState } from "react";
 import styles from "./NegotiationPillars.module.css";
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const PILLARS = [
   {
     key: "skip",
+    video: `${BASE_PATH}/negotiation/skip-flow.mp4`,
+    // Figma node 4401:723's text block (left: 1121.3px, top: 312px within
+    // the 1600x900 frame), converted to cqw so it lands in the same spot.
+    left: "70.081cqw",
+    top: "19.5cqw",
     title: ["본질만 남긴 채", "SKIP"],
     body: [
       "사용자의 SKEEP은 목적을 이루는 데",
@@ -73,16 +80,36 @@ export function NegotiationPillars() {
           {PILLARS.map((pillar, i) => {
             const titleWeight = windowWeight(stage, i, 0.22);
             const bodyWeight = windowWeight(stage, i, 0.44);
+            const hasVideo = "video" in pillar;
+            const textBlockStyle =
+              "left" in pillar ? { left: pillar.left, top: pillar.top } : undefined;
             return (
               <div key={pillar.key} className={styles.layer}>
+                {hasVideo && (
+                  // eslint-disable-next-line jsx-a11y/media-has-caption
+                  <video
+                    className={styles.backgroundVideo}
+                    src={pillar.video}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                )}
                 <div className={styles.content}>
-                  <div className={styles.textBlock}>
-                    <h2 className={styles.heading} style={riseStyle(titleWeight)}>
+                  <div className={styles.textBlock} style={textBlockStyle}>
+                    <h2
+                      className={hasVideo ? `${styles.heading} ${styles.headingOnVideo}` : styles.heading}
+                      style={riseStyle(titleWeight)}
+                    >
                       {pillar.title.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
                     </h2>
-                    <p className={styles.body} style={riseStyle(bodyWeight)}>
+                    <p
+                      className={hasVideo ? `${styles.body} ${styles.bodyOnVideo}` : styles.body}
+                      style={riseStyle(bodyWeight)}
+                    >
                       {pillar.body.map((line) => (
                         <span key={line}>{line}</span>
                       ))}
