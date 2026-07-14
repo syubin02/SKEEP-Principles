@@ -11,10 +11,6 @@ const PILLARS = [
     key: "skip",
     video: `${BASE_PATH}/negotiation/skip-flow.mp4`,
     lightText: true,
-    // Figma node 4401:723's text block (left: 1121.3px, top: 312px within
-    // the 1600x900 frame), converted to cqw so it lands in the same spot.
-    left: "70.081cqw",
-    top: "19.5cqw",
     title: ["본질만 남긴 채", "SKIP"],
     body: [
       "사용자의 SKEEP은 목적을 이루는 데",
@@ -48,10 +44,12 @@ const PILLARS = [
 // Weight window keyed to a scroll delay: delay=0 (container) reacts the
 // instant this pillar becomes current, larger delays (title, then body)
 // require the scroll position to be closer before they catch up — this is
-// what produces the container -> title -> description reveal order.
-function windowWeight(stage: number, index: number, delay: number) {
-  const distance = Math.abs(stage - index);
-  const span = 1 - delay;
+// what produces the container -> title -> description reveal order. `hold`
+// adds a flat plateau at full weight around the pillar's own stage instead
+// of starting to fade the instant scroll moves past it.
+function windowWeight(stage: number, index: number, delay: number, hold = 0) {
+  const distance = Math.max(Math.abs(stage - index) - hold, 0);
+  const span = 1 - delay - hold;
   return Math.min(Math.max(1 - distance / span, 0), 1);
 }
 
@@ -82,13 +80,11 @@ export function NegotiationPillars() {
       <section className={styles.section}>
         <div className={styles.box}>
           {PILLARS.map((pillar, i) => {
-            const containerWeight = windowWeight(stage, i, 0);
+            const containerWeight = windowWeight(stage, i, 0, 0.35);
             const titleWeight = windowWeight(stage, i, 0.22);
             const bodyWeight = windowWeight(stage, i, 0.44);
             const hasVideo = "video" in pillar;
             const lightText = "lightText" in pillar && pillar.lightText;
-            const textBlockStyle =
-              "left" in pillar ? { left: pillar.left, top: pillar.top } : undefined;
             return (
               <div
                 key={pillar.key}
@@ -107,7 +103,7 @@ export function NegotiationPillars() {
                   />
                 )}
                 <div className={styles.content}>
-                  <div className={styles.textBlock} style={textBlockStyle}>
+                  <div className={styles.textBlock}>
                     <h2
                       className={lightText ? `${styles.heading} ${styles.headingOnVideo}` : styles.heading}
                       style={riseStyle(titleWeight)}

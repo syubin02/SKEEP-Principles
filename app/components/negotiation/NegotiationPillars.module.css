@@ -49,8 +49,10 @@
 
 .textBlock {
   position: absolute;
-  left: 70.058cqw;
-  top: 12.125cqw;
+  /* Figma node 4401:723's text block (left: 1121.3px, top: 312px within the
+     1600x900 frame), converted to cqw — shared by all three pillars. */
+  left: 70.081cqw;
+  top: 19.5cqw;
   display: flex;
   flex-direction: column;
   gap: 20px;
